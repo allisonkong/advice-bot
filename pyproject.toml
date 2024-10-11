@@ -1,0 +1,11 @@
+[project]
+name = "advice-bot"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "absl-py>=2.1.0",
+    "discord-py>=2.4.0",
+    "yapf>=0.40.2",
+]
