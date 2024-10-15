@@ -3,9 +3,17 @@ name = "advice-bot"
 version = "0.1.0"
 description = ""
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "absl-py>=2.1.0",
+    "crcmod>=1.7",
     "discord-py>=2.4.0",
+    "google-cloud-kms>=3.0.0",
     "yapf>=0.40.2",
+]
+
+[tool.yapfignore]
+ignore_patterns = [
+  ".git/",
+  ".venv/",
 ]
