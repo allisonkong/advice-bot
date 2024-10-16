@@ -1,6 +1,6 @@
 ### PROJECT GITIGNORE
 
-production/*.json
+src/production/*.json
 
 ### PYTHON GITIGNORE
 
