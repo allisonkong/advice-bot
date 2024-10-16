@@ -9,10 +9,11 @@ _GCP_PROJECT_ID = "genuine-axle-438304-u4"
 
 class Params():
 
-    def __init__(self, application_id, public_key, secret_token):
-        self.application_id = application_id
-        self.public_key = public_key
-        self.secret_token = secret_token
+    def __init__(self, discord_application_id, discord_public_key,
+                 discord_secret_token):
+        self.discord_application_id = discord_application_id
+        self.discord_public_key = discord_public_key
+        self.discord_secret_token = discord_secret_token
 
     @classmethod
     def FromString(cls, plaintext):

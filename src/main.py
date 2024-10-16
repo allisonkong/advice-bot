@@ -6,7 +6,7 @@ import params
 
 def main():
     p = params.GetParams()
-    print(p.application_id)
+    print(p.discord_application_id)
 
 
 if __name__ == "__main__":
