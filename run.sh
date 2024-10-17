@@ -2,4 +2,4 @@
 
 cd "$(dirname "$0")"
 
-uv run yapf -r -i .
+uv run src/main.py
