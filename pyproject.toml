@@ -8,7 +8,9 @@ dependencies = [
     "absl-py>=2.1.0",
     "crcmod>=1.7",
     "discord-py>=2.4.0",
+    "flask>=3.0.3",
     "google-cloud-kms>=3.0.0",
+    "gunicorn>=23.0.0",
     "pytype>=2024.10.11",
     "yapf>=0.40.2",
 ]
