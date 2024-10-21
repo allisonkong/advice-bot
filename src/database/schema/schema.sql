@@ -14,7 +14,8 @@ CREATE TABLE command_log (
   discord_user_id BIGINT NOT NULL,
   command VARCHAR(255) NOT NULL,
   command_args VARCHAR(1000) NULL,
-  command_outcome VARCHAR(
+  -- Outcome of command.
+  command_status INTEGER NOT NULL,
 
   PRIMARY KEY (message_id),
   FOREIGN KEY (discord_user_id)
@@ -27,5 +28,5 @@ CREATE TABLE monthly_lotto (
 
   PRIMARY KEY (discord_user_id),
   FOREIGN KEY (discord_user_id)
-    REFERENCES discord_users (discord_user_id),
+    REFERENCES discord_users (discord_user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

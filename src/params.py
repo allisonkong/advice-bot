@@ -6,10 +6,10 @@ import os.path
 from util import encryption
 
 FLAGS = flags.FLAGS
-flags.DEFINE_enum("env", "test", ["prod", "test"], "Environment to connect to.")
+flags.DEFINE_enum("env", "dev", ["prod", "dev"], "Environment to connect to.")
 
-_PROD_PARAMS_CIPHERTEXT = "./src/production/params.json.encrypted"
-_PROD_PARAMS_PLAINTEXT = "./src/production/params.json"
+_PARAMS_CIPHERTEXT = "./src/production/params.json.encrypted"
+_PARAMS_PLAINTEXT = "./src/production/params.json"
 _GCP_PROJECT_ID = "genuine-axle-438304-u4"
 
 
@@ -77,11 +77,11 @@ def GetParams() -> Params:
 
     plaintext = ""
     # For ease of development.
-    if os.path.exists(_PROD_PARAMS_PLAINTEXT):
-        with open(_PROD_PARAMS_PLAINTEXT, "r") as f:
+    if os.path.exists(_PARAMS_PLAINTEXT):
+        with open(_PARAMS_PLAINTEXT, "r") as f:
             plaintext = f.read()
     else:
-        with open(_PROD_PARAMS_CIPHERTEXT, "rb") as f:
+        with open(_PARAMS_CIPHERTEXT, "rb") as f:
             ciphertext = f.read()
 
         location_id = "global"
