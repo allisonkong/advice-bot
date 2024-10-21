@@ -16,10 +16,10 @@ _GCP_PROJECT_ID = "genuine-axle-438304-u4"
 class Params():
 
     def __init__(self, discord_params: dict, frontend_params: dict,
-                 database_params: dict):
+                 mysql_params: dict):
         self.discord_params = DiscordParams(**discord_params)
         self.frontend_params = FrontendParams(**frontend_params)
-        self.database_params = DatabaseParams(**database_params)
+        self.mysql_params = MysqlParams(**mysql_params)
 
 
 class DiscordParams():
@@ -41,7 +41,7 @@ class FrontendParams():
         self.SESSION_COOKIE_SAMESITE = "Lax"
 
 
-class DatabaseParams():
+class MysqlParams():
 
     def __init__(self, host: str, user: str, password: str, database: str,
                  ssl_ca: str, ssl_cert: str, ssl_key: str):
