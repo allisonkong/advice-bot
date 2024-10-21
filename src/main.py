@@ -5,33 +5,6 @@ import params
 from absl import app
 from absl import logging
 from absl import flags
-import gunicorn.app.base
-
-from frontend import server
-
-FLAGS = flags.FLAGS
-
-flags.DEFINE_integer("gunicorn_workers", 1, "Number of gunicorn workers")
-flags.DEFINE_string("bind", "127.0.0.1:8000", "Host and port number")
-
-
-class ApplicationWrapper(gunicorn.app.base.BaseApplication):
-    """Wrapper for gunicorn."""
-
-    def __init__(self, application, config):
-        self.application = application
-        self.config = config
-        super(ApplicationWrapper, self).__init__()
-
-    def load_config(self):
-        for key in self.config:
-            value = self.config[key]
-            if key not in self.cfg.settings or value is None:
-                continue
-            self.cfg.set(key, value)
-
-    def load(self):
-        return self.application
 
 
 class AdviceBot(discord.Client):
@@ -56,23 +29,13 @@ class AdviceBot(discord.Client):
             print("Channel ID: {}".format(channel.id))
 
 
-def run_advice_bot():
+def main(argv):
     intents = discord.Intents.default()
     intents.message_content = True
     client = AdviceBot(
         application_id=params.GetParams().discord_params.discord_application_id,
         intents=intents)
     client.run(params.GetParams().discord_params.discord_secret_token)
-
-
-def main(argv):
-    gunicorn_config = {
-        "accesslog": "-",
-        "bind": FLAGS.bind,
-        "workers": FLAGS.gunicorn_workers,
-    }
-
-    ApplicationWrapper(server.NewInstance(), gunicorn_config).run()
 
 
 if __name__ == "__main__":

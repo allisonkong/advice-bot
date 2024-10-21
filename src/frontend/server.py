@@ -11,7 +11,6 @@ def NewInstance() -> flask.Flask:
 
     @app.route("/")
     def home():
-        assert False
         return "Hello world!"
 
     return app

@@ -53,6 +53,18 @@ class DatabaseParams():
         self.ssl_cert = ssl_cert
         self.ssl_key = ssl_key
 
+    def ConnectionArgs(self) -> dict:
+        args = {}
+        args["host"] = self.host
+        args["user"] = self.user
+        args["password"] = self.password
+        args["database"] = self.database
+        args["ssl_ca"] = self.ssl_ca
+        args["ssl_cert"] = self.ssl_cert
+        args["ssl_key"] = self.ssl_key
+        args["ssl_verify_cert"] = True
+        return args
+
 
 _PARAMS = None
 
@@ -64,6 +76,7 @@ def GetParams() -> Params:
         return _PARAMS
 
     plaintext = ""
+    # For ease of development.
     if os.path.exists(_PROD_PARAMS_PLAINTEXT):
         with open(_PROD_PARAMS_PLAINTEXT, "r") as f:
             plaintext = f.read()
