@@ -11,9 +11,8 @@ from frontend import server
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_bool("build", True, "Rebuild js before running server")
 flags.DEFINE_integer("gunicorn_workers", 1, "Number of gunicorn workers")
-flags.DEFINE_string("bind", "127.0.0.1:9001", "Host and port number")
+flags.DEFINE_string("bind", "127.0.0.1:8000", "Host and port number")
 
 
 class ApplicationWrapper(gunicorn.app.base.BaseApplication):

@@ -1,8 +1,12 @@
 from absl import logging
+from absl import flags
 import json
 import os.path
 
 from util import encryption
+
+FLAGS = flags.FLAGS
+flags.DEFINE_enum("env", "test", ["prod", "test"], "Environment to connect to.")
 
 _PROD_PARAMS_CIPHERTEXT = "./src/production/params.json.encrypted"
 _PROD_PARAMS_PLAINTEXT = "./src/production/params.json"
@@ -16,11 +20,6 @@ class Params():
         self.discord_params = DiscordParams(**discord_params)
         self.frontend_params = FrontendParams(**frontend_params)
         self.database_params = DatabaseParams(**database_params)
-
-    @classmethod
-    def FromString(cls, plaintext: str):
-        params_dict = json.loads(plaintext)
-        return cls(**params_dict)
 
 
 class DiscordParams():
@@ -44,8 +43,15 @@ class FrontendParams():
 
 class DatabaseParams():
 
-    def __init__(self):
-        pass
+    def __init__(self, host: str, user: str, password: str, database: str,
+                 ssl_ca: str, ssl_cert: str, ssl_key: str):
+        self.host = host
+        self.user = user
+        self.password = password
+        self.database = database
+        self.ssl_ca = ssl_ca
+        self.ssl_cert = ssl_cert
+        self.ssl_key = ssl_key
 
 
 _PARAMS = None
@@ -72,4 +78,9 @@ def GetParams() -> Params:
                                                 key_ring_id, key_id, ciphertext)
         plaintext = response.plaintext
 
-    return Params.FromString(plaintext)
+    params_map = json.loads(plaintext)
+
+    if FLAGS.env not in params_map:
+        logging.fatal("Missing params for env {}".format(FLAGS.env))
+
+    return Params(**params_map[FLAGS.env])
