@@ -6,14 +6,14 @@ import shlex
 import time
 
 from commands.common import Command, CommandResult, CommandStatus
-from commands import monthly_lotto
+from commands import monthly_lottery
 import params
 from util import discord_util
 
 _COMMAND_PREFIX = "!"
 _COMMAND_REGEX = re.compile(_COMMAND_PREFIX + r'(\w+)\b.*')
 _COMMAND_REGISTRY = {
-    "lotto": monthly_lotto.MonthlyLottoCommand(),
+    "lotto": monthly_lottery.MonthlyLotteryCommand(),
 }
 _MAX_MESSAGE_LENGTH = 255
 

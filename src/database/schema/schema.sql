@@ -18,7 +18,7 @@ CREATE TABLE command_log (
     REFERENCES discord_users (discord_user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE monthly_lotto (
+CREATE TABLE monthly_lottery (
   discord_user_id BIGINT NOT NULL,
   last_participation_micros BIGINT NOT NULL,
 

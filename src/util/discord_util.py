@@ -40,6 +40,8 @@ def LogCommand(message: discord.Message, timestamp_micros: int,
             VALUES
                 (%(message_id)s, %(timestamp_micros)s, %(discord_user_id)s,
                  %(command)s, %(command_status)s)
+            ON DUPLICATE KEY UPDATE
+                timestamp_micros = %(timestamp_micros)s
         """
         cursor.execute(
             query, {
