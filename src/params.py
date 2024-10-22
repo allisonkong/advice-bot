@@ -8,8 +8,8 @@ from util import encryption
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("env", "dev", ["prod", "dev"], "Environment to connect to.")
 
-_PARAMS_CIPHERTEXT = "./src/production/params.json.encrypted"
-_PARAMS_PLAINTEXT = "./src/production/params.json"
+_PARAMS_CIPHERTEXT = "./production/params.json.encrypted"
+_PARAMS_PLAINTEXT = "./production/params.json"
 _GCP_PROJECT_ID = "genuine-axle-438304-u4"
 
 
