@@ -100,7 +100,7 @@ class Prize(enum.IntEnum):
 
 
 _ROLLS = 4
-_PRIZE_RATE = 0.5
+_PRIZE_RATE = 0.0625
 _PRIZE_TABLE = [
     (Prize.GOODYBAG, 0.3),
     (Prize.CASH, 0.3),
