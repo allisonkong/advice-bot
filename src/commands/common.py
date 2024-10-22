@@ -1,15 +1,8 @@
-import enum
 import discord
+import enum
 
 
-class Command():
-
-    def Execute(self, message: discord.Message, timestamp_micros: int,
-                args: list[str]) -> CommandResult:
-        raise NotImplementedError
-
-
-class CommandStatus(enum.Enum):
+class CommandStatus(enum.IntEnum):
     # Based on absl::Status.
     OK = 0
     INVALID_ARGUMENT = 3
@@ -23,3 +16,10 @@ class CommandResult():
     def __init__(self, status: CommandStatus, message: str):
         self.status = status
         self.message = message
+
+
+class Command():
+
+    def Execute(self, message: discord.Message, timestamp_micros: int,
+                argv: list[str]) -> CommandResult:
+        raise NotImplementedError

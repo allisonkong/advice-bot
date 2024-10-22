@@ -1,8 +1,6 @@
 
 CREATE TABLE discord_users (
   discord_user_id BIGINT NOT NULL,
-  -- Globally unique username. This includes the discriminator if
-  -- the user still has one.
   discord_username VARCHAR(255) NOT NULL,
 
   PRIMARY KEY (discord_user_id)
@@ -13,8 +11,6 @@ CREATE TABLE command_log (
   timestamp_micros BIGINT NOT NULL,
   discord_user_id BIGINT NOT NULL,
   command VARCHAR(255) NOT NULL,
-  command_args VARCHAR(1000) NULL,
-  -- Outcome of command.
   command_status INTEGER NOT NULL,
 
   PRIMARY KEY (message_id),
