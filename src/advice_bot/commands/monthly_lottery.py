@@ -4,9 +4,9 @@ import discord
 import enum
 import random
 
-from commands.common import Command, CommandResult, CommandStatus
-from database import storage
-from util import discord_util
+from advice_bot.commands.common import Command, CommandResult, CommandStatus
+from advice_bot.database import storage
+from advice_bot.util import discord_util
 
 
 def _GetLastParticipationMicros(discord_user_id: int) -> int | None:

@@ -20,6 +20,7 @@ dependencies = [
     { name = "discord-py" },
     { name = "google-cloud-kms" },
     { name = "mysql-connector-python" },
+    { name = "protobuf" },
     { name = "pytype" },
     { name = "yapf" },
 ]
@@ -31,6 +32,7 @@ requires-dist = [
     { name = "discord-py", specifier = ">=2.4.0" },
     { name = "google-cloud-kms", specifier = ">=3.0.0" },
     { name = "mysql-connector-python", specifier = ">=9.1.0" },
+    { name = "protobuf", specifier = ">=5.28.2" },
     { name = "pytype", specifier = ">=2024.10.11" },
     { name = "yapf", specifier = ">=0.40.2" },
 ]

@@ -10,6 +10,7 @@ dependencies = [
     "discord-py>=2.4.0",
     "google-cloud-kms>=3.0.0",
     "mysql-connector-python>=9.1.0",
+    "protobuf>=5.28.2",
     "pytype>=2024.10.11",
     "yapf>=0.40.2",
 ]
@@ -18,4 +19,5 @@ dependencies = [
 ignore_patterns = [
   ".git/",
   ".venv/",
+  "**/generated/**",
 ]

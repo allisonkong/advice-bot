@@ -4,4 +4,4 @@ USE advice_bot_dev;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'advice_bot'@'%';
 
-SOURCE src/database/schema/schema.sql;
+SOURCE advice_bot/database/schema/schema.sql;

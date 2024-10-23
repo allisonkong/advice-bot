@@ -2,7 +2,7 @@
 
 from mysql.connector.pooling import MySQLConnectionPool, PooledMySQLConnection
 
-import params
+from advice_bot import params
 
 # Global database.Connection pool, lazily loaded and refreshed as needed.
 _CNX_POOL = None

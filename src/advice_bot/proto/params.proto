@@ -1,0 +1,34 @@
+syntax = "proto2";
+
+package advice_bot;
+
+message DiscordParams {
+  optional string discord_application_id = 1;
+  optional string discord_public_key = 2;
+  optional string discord_client_secret = 3;
+  optional string discord_secret_token = 4;
+}
+
+message MysqlParams {
+  optional string host = 1;
+  optional string user = 2;
+  optional string password = 3;
+  optional string database = 4;
+  optional string ssl_ca_file = 5;
+  optional string ssl_cert_file = 6;
+  optional string ssl_key_file = 7;
+}
+
+
+message Params {
+  optional DiscordParams discord_params = 1;
+  optional MysqlParams mysql_params = 2;
+}
+
+message ParamsFile {
+  message Environment {
+    optional string env = 1;
+    optional Params params = 2;
+  }
+  repeated Environment environments = 1;
+}

@@ -5,10 +5,10 @@ import re
 import shlex
 import time
 
-from commands.common import Command, CommandResult, CommandStatus
-from commands import monthly_lottery
-import params
-from util import discord_util
+from advice_bot.commands.common import Command, CommandResult, CommandStatus
+from advice_bot.commands import monthly_lottery
+from advice_bot import params
+from advice_bot.util import discord_util
 
 _COMMAND_PREFIX = "!"
 _COMMAND_REGEX = re.compile(_COMMAND_PREFIX + r'(\w+)\b.*')

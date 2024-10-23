@@ -6,8 +6,9 @@ import logging.handlers as handlers
 import os
 import pathlib
 
-from advice_bot import AdviceBot
-import params
+from advice_bot.advice_bot import AdviceBot
+from advice_bot import params
+from advice_bot.proto.generated import params_pb2
 
 
 def SetupLogging():

@@ -3,7 +3,7 @@ from absl import flags
 import json
 import os.path
 
-from util import encryption
+from advice_bot.util import encryption
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("env", "dev", ["prod", "dev"], "Environment to connect to.")

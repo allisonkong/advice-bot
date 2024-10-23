@@ -1,8 +1,8 @@
 import discord
 import mysql.connector
 
-from database import storage
-from commands.common import Command, CommandResult, CommandStatus
+from advice_bot.database import storage
+from advice_bot.commands.common import Command, CommandResult, CommandStatus
 
 
 def UpdateDiscordUserInTransaction(discord_user: discord.Member |
