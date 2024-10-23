@@ -2,4 +2,4 @@
 
 cd "$(dirname "$0")"
 
-uv run src/main.py
+uv run src/main.py $@

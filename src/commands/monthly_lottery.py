@@ -79,7 +79,7 @@ def _IsEligible(discord_user: discord.Member | discord.abc.User,
                 timestamp_micros: int, argv: list[str]) -> bool:
     # For ease of testing.
     allison = 262055165392191488
-    if discord.user.id == allison and ("-f" in argv or "--force" in argv):
+    if discord_user.id == allison and ("-f" in argv or "--force" in argv):
         return True
 
     last_participation_micros = _GetLastParticipationMicros(discord_user.id)

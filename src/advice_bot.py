@@ -49,15 +49,26 @@ class AdviceBot(discord.Client):
 
     async def ProcessCommand(self, command: str, message: discord.Message,
                              timestamp_micros: int, argv: list[str]):
+        logging.info(
+            f"PROCESSING command from {message.author.name}: {message.content}")
         if command not in _COMMAND_REGISTRY:
+            logging.info(
+                f"REJECTING command from {message.author.name}: unrecognized command"
+            )
             await message.channel.send(f"Unrecognized command: {command}")
+            return
 
         if len(message.content) > _MAX_MESSAGE_LENGTH:
+            logging.info(
+                f"REJECTING command from {message.author.name}: too long")
             await message.channel.send(
                 "Message rejected: too long (max 255 chars)")
+            return
 
         result: CommandResult = _COMMAND_REGISTRY[command].Execute(
             message, timestamp_micros, argv)
 
         discord_util.LogCommand(message, timestamp_micros, result)
+        logging.info(
+            f"COMPLETING command from {message.author.name}: {result.message}")
         await message.channel.send(result.message)
