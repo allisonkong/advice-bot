@@ -8,7 +8,7 @@ import pathlib
 
 from advice_bot.advice_bot import AdviceBot
 from advice_bot import params
-from advice_bot.proto.generated import params_pb2
+from advice_bot.proto import params_pb2
 
 
 def SetupLogging():
@@ -32,6 +32,11 @@ def SetupLogging():
 
 
 def main(argv):
+    # test
+    p = params_pb2.Params()
+    p.discord_params.discord_application_id = "12345"
+    print(p)
+
     SetupLogging()
     secret_token = params.GetParams().discord_params.discord_secret_token
     client = AdviceBot.CreateInstance()
