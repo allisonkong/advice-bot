@@ -8,16 +8,6 @@ from commands.common import Command, CommandResult, CommandStatus
 from database import storage
 from util import discord_util
 
-_RNG = None
-
-
-def GetRng():
-    global _RNG
-    if _RNG is None:
-        _RNG = random.Random()
-        _RNG.seed()
-    return _RNG
-
 
 def _GetLastParticipationMicros(discord_user_id: int) -> int | None:
     cnx = storage.Connect()
@@ -113,11 +103,11 @@ _EVIL_KERMIT = "<:evil_Kermit:626526532256661524>"
 def Participate():
     prizes = []
     for i in range(_ROLLS):
-        roll = GetRng().random()
+        roll = random.SystemRandom().random()
         if roll >= _PRIZE_RATE:
             prizes.append(None)
             continue
-        prize_roll = GetRng().random()
+        prize_roll = random.SystemRandom().random()
         for prize, prize_rate in _PRIZE_TABLE:
             if prize_roll < prize_rate:
                 prizes.append(prize)
