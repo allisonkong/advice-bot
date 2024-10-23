@@ -15,10 +15,8 @@ _GCP_PROJECT_ID = "genuine-axle-438304-u4"
 
 class Params():
 
-    def __init__(self, discord_params: dict, frontend_params: dict,
-                 mysql_params: dict):
+    def __init__(self, discord_params: dict, mysql_params: dict):
         self.discord_params = DiscordParams(**discord_params)
-        self.frontend_params = FrontendParams(**frontend_params)
         self.mysql_params = MysqlParams(**mysql_params)
 
 
@@ -30,15 +28,6 @@ class DiscordParams():
         self.discord_public_key = discord_public_key
         self.discord_client_secret = discord_client_secret
         self.discord_secret_token = discord_secret_token
-
-
-class FrontendParams():
-
-    def __init__(self, secret_key: str):
-        self.MAX_CONTENT_LENGTH = 1 * 1024 * 1024 * 1024
-        self.SECRET_KEY = secret_key
-        self.SESSION_COOKIE_HTTPONLY = True
-        self.SESSION_COOKIE_SAMESITE = "Lax"
 
 
 class MysqlParams():
