@@ -25,7 +25,7 @@ message Params {
   optional MysqlParams mysql_params = 2;
 }
 
-message ParamsFile {
+message ParamsList {
   message Environment {
     optional string env = 1;
     optional Params params = 2;

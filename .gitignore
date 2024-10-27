@@ -1,6 +1,7 @@
 ### PROJECT GITIGNORE
 
 production/*.json
+production/*.textproto
 
 ### PYTHON GITIGNORE
 
