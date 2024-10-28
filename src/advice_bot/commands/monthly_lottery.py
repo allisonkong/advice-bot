@@ -128,7 +128,9 @@ class MonthlyLotteryCommand(Command):
 
         prizes = Participate()
         logging.info(prizes)
-        result_message = f"{message.author.mention} is participating in the monthly lottery!\n\n"
+
+        today_str = _DateFromMicros(timestamp_micros).strftime("%B %Y")
+        result_message = f"{message.author.mention} is participating in the lottery for {today_str}!\n\n"
         for i in range(len(prizes)):
             prize = prizes[i]
             result_message += f"**Roll #{i + 1}**: "
@@ -141,7 +143,7 @@ class MonthlyLotteryCommand(Command):
             elif prize == Prize.CUSTOM_RANK:
                 result_message += "Congratulations, you win a custom rank for a week!"
             elif prize == Prize.CUSTOM_RANK_PLUS:
-                result_message += f"Congratulations, you win a super-special custom rank for a week! It's like the normal custom rank, but you also choose who receives it {_EVIL_KERMIT}\n\n(Note: the recipient may choose to opt-out, and you are welcome to choose yourself if you wish)"
+                result_message += f"Congratulations, you win a super-special custom rank for a week! It's like the normal custom rank, but you may also choose who receives it {_EVIL_KERMIT}\n\n(Note: the recipient is allowed to opt-out, and you can choose yourself.)"
             else:
                 logging.warning(f"Unexpected prize: {prize}")
                 result_message += "Sorry, better luck next time!"
