@@ -1,6 +1,29 @@
 syntax = "proto2";
 
-package advice_bot;
+enum Command {
+  UNKNOWN_COMMAND = 1;
+  MONTHLY_LOTTERY_COMMAND = 2;
+}
+
+message ChannelList {
+  // Exactly one of these will be set.
+  optional bool all_channels = 1;
+  repeated int64 specific_channels = 2;
+}
+
+message CommandConfig {
+  optional Command command = 1;
+  optional ChannelList channels = 2;
+}
+
+message ServerConfig {
+  optional int64 guild_id = 1;
+  repeated CommandConfig commands = 2;
+}
+
+message Config {
+  repeated ServerConfig servers = 1;
+}
 
 message DiscordParams {
   optional string discord_application_id = 1;
@@ -19,10 +42,10 @@ message MysqlParams {
   optional string ssl_key_file = 7;
 }
 
-
 message Params {
   optional DiscordParams discord_params = 1;
   optional MysqlParams mysql_params = 2;
+  optional Config config = 3;
 }
 
 message ParamsMap {

@@ -2,6 +2,6 @@
 
 cd "$(dirname "$0")"
 
-make -C src/advice_bot/proto/
+make -C src/advice_bot/proto/ || exit
 
 uv run src/main.py $@
