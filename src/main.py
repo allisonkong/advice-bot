@@ -38,7 +38,7 @@ def main(argv):
     print(p)
 
     SetupLogging()
-    secret_token = params.GetParams().discord_params.discord_secret_token
+    secret_token = params.Params().discord_params.discord_secret_token
     client = AdviceBot.CreateInstance()
     client.run(secret_token)
 

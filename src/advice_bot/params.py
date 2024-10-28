@@ -1,64 +1,23 @@
 from absl import logging
 from absl import flags
+from google.protobuf import text_format
 import json
 import os.path
 
+from advice_bot.proto import params_pb2
 from advice_bot.util import encryption
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("env", "dev", ["prod", "dev"], "Environment to connect to.")
 
-_PARAMS_CIPHERTEXT = "./production/params.json.encrypted"
-_PARAMS_PLAINTEXT = "./production/params.json"
+_PARAMS_CIPHERTEXT = "./production/params.textproto.encrypted"
+_PARAMS_PLAINTEXT = "./production/params.textproto"
 _GCP_PROJECT_ID = "genuine-axle-438304-u4"
-
-
-class Params():
-
-    def __init__(self, discord_params: dict, mysql_params: dict):
-        self.discord_params = DiscordParams(**discord_params)
-        self.mysql_params = MysqlParams(**mysql_params)
-
-
-class DiscordParams():
-
-    def __init__(self, discord_application_id: str, discord_public_key: str,
-                 discord_client_secret: str, discord_secret_token: str):
-        self.discord_application_id = discord_application_id
-        self.discord_public_key = discord_public_key
-        self.discord_client_secret = discord_client_secret
-        self.discord_secret_token = discord_secret_token
-
-
-class MysqlParams():
-
-    def __init__(self, host: str, user: str, password: str, database: str,
-                 ssl_ca: str, ssl_cert: str, ssl_key: str):
-        self.host = host
-        self.user = user
-        self.password = password
-        self.database = database
-        self.ssl_ca = ssl_ca
-        self.ssl_cert = ssl_cert
-        self.ssl_key = ssl_key
-
-    def ConnectionArgs(self) -> dict:
-        args = {}
-        args["host"] = self.host
-        args["user"] = self.user
-        args["password"] = self.password
-        args["database"] = self.database
-        args["ssl_ca"] = self.ssl_ca
-        args["ssl_cert"] = self.ssl_cert
-        args["ssl_key"] = self.ssl_key
-        args["ssl_verify_cert"] = True
-        return args
-
 
 _PARAMS = None
 
 
-def GetParams() -> Params:
+def Params() -> params_pb2.Params:
     """Returns the global singleton params object, initializing it if necessary."""
     global _PARAMS
     if _PARAMS is not None:
@@ -80,9 +39,22 @@ def GetParams() -> Params:
                                                 key_ring_id, key_id, ciphertext)
         plaintext = response.plaintext
 
-    params_map = json.loads(plaintext)
+    params_map = text_format.Parse(plaintext, params_pb2.ParamsMap())
+    if FLAGS.env not in params_map.environments:
+        logging.fatal(f"Failed to load params for environment {FLAGS.env}")
+    _PARAMS = params_map.environments[FLAGS.env]
+    return _PARAMS
 
-    if FLAGS.env not in params_map:
-        logging.fatal("Missing params for env {}".format(FLAGS.env))
 
-    return Params(**params_map[FLAGS.env])
+def MysqlConnectionArgs() -> dict:
+    mysql_params = Params().mysql_params
+    args = {}
+    args["host"] = mysql_params.host
+    args["user"] = mysql_params.user
+    args["password"] = mysql_params.password
+    args["database"] = mysql_params.database
+    args["ssl_ca"] = mysql_params.ssl_ca_file
+    args["ssl_cert"] = mysql_params.ssl_cert_file
+    args["ssl_key"] = mysql_params.ssl_key_file
+    args["ssl_verify_cert"] = True
+    return args

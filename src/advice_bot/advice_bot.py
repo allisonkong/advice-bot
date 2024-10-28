@@ -25,8 +25,7 @@ class AdviceBot(discord.Client):
         intents = discord.Intents.default()
         intents.message_content = True
 
-        application_id = params.GetParams(
-        ).discord_params.discord_application_id
+        application_id = params.Params().discord_params.discord_application_id
 
         return cls(application_id=application_id, intents=intents)
 

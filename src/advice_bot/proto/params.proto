@@ -25,10 +25,7 @@ message Params {
   optional MysqlParams mysql_params = 2;
 }
 
-message ParamsList {
-  message Environment {
-    optional string env = 1;
-    optional Params params = 2;
-  }
-  repeated Environment environments = 1;
+message ParamsMap {
+  // Maps environment name to params.
+  map<string, Params> environments = 1;
 }

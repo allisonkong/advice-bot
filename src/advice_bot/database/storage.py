@@ -9,11 +9,10 @@ _CNX_POOL = None
 
 
 def _CreatePool() -> MySQLConnectionPool:
-    mysql_params = params.GetParams().mysql_params
     return MySQLConnectionPool(pool_name="main_pool",
                                pool_size=5,
                                pool_reset_session=True,
-                               **mysql_params.ConnectionArgs())
+                               **params.MysqlConnectionArgs())
 
 
 def Connect() -> PooledMySQLConnection:
