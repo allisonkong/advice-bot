@@ -13,9 +13,9 @@ class CommandStatus(enum.IntEnum):
 
 class CommandResult():
 
-    def __init__(self, status: CommandStatus, message: str):
+    def __init__(self, status: CommandStatus, response: str):
         self.status = status
-        self.message = message
+        self.response = response
 
 
 class Command():

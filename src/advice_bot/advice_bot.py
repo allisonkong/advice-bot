@@ -197,8 +197,8 @@ class AdviceBot(discord.Client):
             message, timestamp_micros, argv)
 
         discord_util.LogCommand(message, timestamp_micros, result)
-        logging.info(f"PROCESSED message {message.id}: {result.message}")
-        await self.SendResponse(message, result.message)
+        logging.info(f"PROCESSED message {message.id}: {result.response}")
+        await self.SendResponse(message, result.response)
 
 
 _InitializeRegistry()
