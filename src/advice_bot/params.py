@@ -26,9 +26,11 @@ def Params() -> params_pb2.Params:
     plaintext = ""
     # For ease of development.
     if os.path.exists(_PARAMS_PLAINTEXT):
+        logging.info(f"Loading decrypted params from {_PARAMS_PLAINTEXT}")
         with open(_PARAMS_PLAINTEXT, "r") as f:
             plaintext = f.read()
     else:
+        logging.info(f"Loading encrypted params from {_PARAMS_CIPHERTEXT}")
         with open(_PARAMS_CIPHERTEXT, "rb") as f:
             ciphertext = f.read()
 
@@ -41,7 +43,8 @@ def Params() -> params_pb2.Params:
 
     params_map = text_format.Parse(plaintext, params_pb2.ParamsMap())
     if FLAGS.env not in params_map.environments:
-        logging.fatal(f"Failed to load params for environment {FLAGS.env}")
+        logging.fatal(f"Failed to load params for environment: {FLAGS.env}")
+    logging.info(f"Successfully loaded params for environment: {FLAGS.env}")
     _PARAMS = params_map.environments[FLAGS.env]
     return _PARAMS
 

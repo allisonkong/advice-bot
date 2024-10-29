@@ -2,7 +2,8 @@ syntax = "proto2";
 
 enum Command {
   UNKNOWN_COMMAND = 1;
-  MONTHLY_LOTTERY_COMMAND = 2;
+  HELP_COMMAND = 2;
+  MONTHLY_LOTTERY_COMMAND = 3;
 }
 
 message ChannelList {
