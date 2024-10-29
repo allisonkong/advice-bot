@@ -14,15 +14,99 @@ from advice_bot.util import discord_util
 _COMMAND_PREFIX = "!"
 _COMMAND_REGEX = re.compile(_COMMAND_PREFIX + r'(\w+)\b.*')
 _COMMAND_ALIASES = {
+    "help": params_pb2.Command.HELP_COMMAND,
     "roll": params_pb2.Command.MONTHLY_LOTTERY_COMMAND,
     "lotto": params_pb2.Command.MONTHLY_LOTTERY_COMMAND,
-    "lottery": params_pb2.Command.MONTHLY_LOTTERY_COMMAND,
 }
-_COMMAND_REGISTRY = {
+_COMMAND_REGISTRY = None
+_COMMAND_DESCRIPTIONS = {
     params_pb2.Command.MONTHLY_LOTTERY_COMMAND:
-        monthly_lottery.MonthlyLotteryCommand(),
+        "`!roll`: Participate in the monthly lottery/giveaway. You may also use `!lotto` as an alias for this command.",
+    params_pb2.Command.HELP_COMMAND:
+        "`!help`: Print the list of available commands.",
 }
 _MAX_MESSAGE_LENGTH = 255
+
+
+def _InitializeRegistry():
+    global _COMMAND_REGISTRY
+    _COMMAND_REGISTRY = {
+        params_pb2.HELP_COMMAND:
+            HelpCommand(),
+        params_pb2.MONTHLY_LOTTERY_COMMAND:
+            monthly_lottery.MonthlyLotteryCommand(),
+    }
+
+
+def _IsCommandEnabled(command_enum: params_pb2.Command,
+                      message: discord.Message):
+    # !help is special.
+    if command_enum == params_pb2.Command.HELP_COMMAND:
+        return _IsChannelWatched(message)
+    """Check if the command was enabled for the given channel."""
+    if message.guild is None:
+        return False
+    guild_id = message.guild.id
+    server_config_map = params.ServerConfigMap()
+    if guild_id not in server_config_map:
+        return False
+    for command_config in server_config_map[guild_id].commands:
+        # Expect low N so direct iteration should be faster + simpler than
+        # making a set.
+        if command_config.command != command_enum:
+            continue
+        if command_config.channels.all_channels:
+            return True
+        for channel_id in command_config.channels.specific_channels:
+            if channel_id == message.channel.id:
+                return True
+    return False
+
+
+def _IsChannelWatched(message: discord.Message):
+    """Check if the message was sent in a channel that the bot is supposed
+    to watch.
+
+    This differs from _IsCommandEnabled() because this is for deciding if we
+    should respond to an invalid command, while _IsCommandEnabled() is for
+    valid commands.
+    """
+    if message.guild is None:
+        return False
+    guild_id = message.guild.id
+    server_config_map = params.ServerConfigMap()
+    if guild_id not in server_config_map:
+        return False
+    for command_config in server_config_map[guild_id].commands:
+        if command_config.channels.all_channels:
+            return True
+        for channel_id in command_config.channels.specific_channels:
+            if channel_id == message.channel.id:
+                return True
+    return False
+
+
+class HelpCommand(Command):
+
+    def Execute(self, message: discord.Message, timestamp_micros: int,
+                argv: list[str]) -> CommandResult:
+        help_msg = self.GetHelpMsg(message)
+        return CommandResult(CommandStatus.OK, help_msg)
+
+    def GetHelpMsg(self, message: discord.Message):
+        # List of commands available in the current channel.
+        available_commands = []
+        for command_enum in sorted(_COMMAND_DESCRIPTIONS):
+            if _IsCommandEnabled(command_enum, message):
+                available_commands.append(command_enum)
+
+        if len(available_commands) == 0:
+            return ""
+
+        help_msg = "Available commands in this channel:"
+        for command_enum in available_commands:
+            help_msg += f"\n* {_COMMAND_DESCRIPTIONS[command_enum]}"
+        return help_msg
 
 
 class AdviceBot(discord.Client):
@@ -53,6 +137,11 @@ class AdviceBot(discord.Client):
         argv: list[str] = shlex.split(message.content)
         await self.ProcessCommand(command, message, timestamp_micros, argv)
 
+    async def SendResponse(self, message: discord.Message, response: str):
+        if not response:
+            return
+        await message.channel.send(response)
+
     async def ProcessCommand(self, command: str, message: discord.Message,
                              timestamp_micros: int, argv: list[str]):
         """Handles a parsed command.
@@ -71,13 +160,14 @@ class AdviceBot(discord.Client):
             f"\nchannel: {message.channel.name} ({message.channel.id})" +
             f"\ncontent: {message.content}")
 
-        is_watched_channel = self.IsChannelWatched(message)
+        is_watched_channel = _IsChannelWatched(message)
 
         if command not in _COMMAND_ALIASES:
             if is_watched_channel:
                 logging.info(
                     f"REJECTING message {message.id}: unrecognized command")
-                await message.channel.send(
+                await self.SendResponse(
+                    message,
                     f"Unrecognized command: {_COMMAND_PREFIX}{command}")
             else:
                 logging.info(
@@ -86,10 +176,11 @@ class AdviceBot(discord.Client):
 
         command_enum = _COMMAND_ALIASES[command]
 
-        if not self.IsCommandEnabled(command_enum, message):
+        if not _IsCommandEnabled(command_enum, message):
             if is_watched_channel:
                 logging.info(f"REJECTING message {message.id}: not enabled")
-                await message.channel.send(
+                await self.SendResponse(
+                    message,
                     f"You cannot use {_COMMAND_PREFIX}{command} in this channel."
                 )
             else:
@@ -98,8 +189,8 @@ class AdviceBot(discord.Client):
 
         if len(message.content) > _MAX_MESSAGE_LENGTH:
             logging.info(f"REJECTING message {message.id}: too long")
-            await message.channel.send(
-                "Message rejected: too long (max 255 chars)")
+            await self.SendResponse(
+                message, "Message rejected: too long (max 255 chars)")
             return
 
         result: CommandResult = _COMMAND_REGISTRY[command_enum].Execute(
@@ -107,47 +198,7 @@ class AdviceBot(discord.Client):
 
         discord_util.LogCommand(message, timestamp_micros, result)
         logging.info(f"PROCESSED message {message.id}: {result.message}")
-        await message.channel.send(result.message)
+        await self.SendResponse(message, result.message)
 
-    def IsCommandEnabled(self, command_enum: params_pb2.Command,
-                         message: discord.Message):
-        """Check if the command was enabled for the given channel."""
-        if message.guild is None:
-            return False
-        guild_id = message.guild.id
-        server_config_map = params.ServerConfigMap()
-        if guild_id not in server_config_map:
-            return False
-        for command_config in server_config_map[guild_id].commands:
-            # Expect low N so direct iteration should be faster + simpler than
-            # making a set.
-            if command_config.command != command_enum:
-                continue
-            if command_config.channels.all_channels:
-                return True
-            for channel_id in command_config.channels.specific_channels:
-                if channel_id == message.channel.id:
-                    return True
-        return False
 
-    def IsChannelWatched(self, message: discord.Message):
-        """Check if the message was sent in a channel that the bot is supposed
-        to watch.
-
-        This differs from IsCommandEnabled() because this is for deciding if we
-        should respond to an invalid command, while IsCommandEnabled() is for
-        valid commands.
-        """
-        if message.guild is None:
-            return False
-        guild_id = message.guild.id
-        server_config_map = params.ServerConfigMap()
-        if guild_id not in server_config_map:
-            return False
-        for command_config in server_config_map[guild_id].commands:
-            if command_config.channels.all_channels:
-                return True
-            for channel_id in command_config.channels.specific_channels:
-                if channel_id == message.channel.id:
-                    return True
-        return False
+_InitializeRegistry()
