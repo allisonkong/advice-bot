@@ -46,7 +46,7 @@ def Params() -> params_pb2.Params:
     return _PARAMS
 
 
-def MysqlConnectionArgs() -> dict:
+def MysqlConnectionArgs() -> dict[str, str]:
     mysql_params = Params().mysql_params
     args = {}
     args["host"] = mysql_params.host
@@ -58,3 +58,18 @@ def MysqlConnectionArgs() -> dict:
     args["ssl_key"] = mysql_params.ssl_key_file
     args["ssl_verify_cert"] = True
     return args
+
+
+_SERVER_CONFIG_MAP = None
+
+
+def ServerConfigMap() -> dict[int, params_pb2.ServerConfig]:
+    global _SERVER_CONFIG_MAP
+    if _SERVER_CONFIG_MAP is not None:
+        return _SERVER_CONFIG_MAP
+
+    _SERVER_CONFIG_MAP = {}
+    for server_config in Params().config.servers:
+        _SERVER_CONFIG_MAP[server_config.guild_id] = server_config
+
+    return _SERVER_CONFIG_MAP

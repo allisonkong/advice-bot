@@ -48,20 +48,22 @@ class AdviceBot(discord.Client):
 
     async def ProcessCommand(self, command: str, message: discord.Message,
                              timestamp_micros: int, argv: list[str]):
-        logging.info(
-            f"PROCESSING command from {message.author.name}: {message.content}")
+        logging.info(f"PROCESSING command {command}:" +
+                     f"\nmessage_id: {message.id}" +
+                     f"\nauthor: {message.author.name} ({message.author.id})" +
+                     (f"\nserver: {message.guild.name} ({message.guild.id})"
+                      if message.guild is not None else "") +
+                     f"\ncontent: {message.content}")
 
         if len(message.content) > _MAX_MESSAGE_LENGTH:
-            logging.info(
-                f"REJECTING command from {message.author.name}: too long")
+            logging.info(f"REJECTING message {message.id}: too long")
             await message.channel.send(
                 "Message rejected: too long (max 255 chars)")
             return
 
         if command not in _COMMAND_REGISTRY:
             logging.info(
-                f"REJECTING command from {message.author.name}: unrecognized command"
-            )
+                f"REJECTING message {message.id}: unrecognized command")
             await message.channel.send(f"Unrecognized command: {command}")
             return
 
@@ -69,6 +71,5 @@ class AdviceBot(discord.Client):
             message, timestamp_micros, argv)
 
         discord_util.LogCommand(message, timestamp_micros, result)
-        logging.info(
-            f"COMPLETING command from {message.author.name}: {result.message}")
+        logging.info(f"RESPONDING TO message {message.id}: {result.message}")
         await message.channel.send(result.message)

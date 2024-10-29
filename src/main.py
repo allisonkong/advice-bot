@@ -1,8 +1,7 @@
 from absl import app
 from absl import flags
+from absl import logging
 import discord
-import logging as py_logging
-import logging.handlers as handlers
 import os
 import pathlib
 
@@ -11,23 +10,14 @@ from advice_bot import params
 
 
 def SetupLogging():
-    log_filename = os.path.expanduser("~/.logs/advice_bot.log")
-    log_dir = os.path.dirname(log_filename)
+    log_dir = os.path.expanduser("~/.logs/")
     # Make dir if necessary.
     os.makedirs(log_dir, mode=0o700, exist_ok=True)
-    handler = handlers.TimedRotatingFileHandler(log_filename,
-                                                when="midnight",
-                                                interval=1,
-                                                backupCount=180,
-                                                utc=True)
 
-    logger = py_logging.getLogger("absl")
-    logger.setLevel(py_logging.INFO)
-    logger.addHandler(handler)
-
-    logger = py_logging.getLogger("discord")
-    logger.setLevel(py_logging.INFO)
-    logger.addHandler(handler)
+    absl_handler = logging.get_absl_handler()
+    absl_handler.use_absl_log_file(program_name="advice_bot.py",
+                                   log_dir=log_dir)
+    logging.use_absl_handler()
 
 
 def main(argv):
