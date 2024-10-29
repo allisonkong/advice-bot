@@ -68,8 +68,8 @@ def _DateFromMicros(timestamp_micros: int):
 def _IsEligible(discord_user: discord.Member | discord.abc.User,
                 timestamp_micros: int, argv: list[str]) -> bool:
     # For ease of testing.
-    allison = 262055165392191488
-    if discord_user.id == allison and ("-f" in argv or "--force" in argv):
+    if discord_util.IsAdmin(discord_user) and ("-f" in argv or
+                                               "--force" in argv):
         return True
 
     last_participation_micros = _GetLastParticipationMicros(discord_user.id)

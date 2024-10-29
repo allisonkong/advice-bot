@@ -5,6 +5,11 @@ from advice_bot.database import storage
 from advice_bot.commands.common import Command, CommandResult, CommandStatus
 
 
+def IsAdmin(discord_user: discord.Member | discord.abc.User):
+    allison_id = 262055165392191488
+    return discord_user.id == allison_id
+
+
 def UpdateDiscordUserInTransaction(discord_user: discord.Member |
                                    discord.abc.User,
                                    cursor: mysql.connector.cursor.MySQLCursor):
