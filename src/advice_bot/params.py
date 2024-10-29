@@ -46,7 +46,7 @@ def Params() -> params_pb2.Params:
     return _PARAMS
 
 
-def MysqlConnectionArgs() -> dict[str, str]:
+def MysqlConnectionArgs() -> dict:
     mysql_params = Params().mysql_params
     args = {}
     args["host"] = mysql_params.host

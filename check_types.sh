@@ -2,4 +2,4 @@
 
 cd "$(dirname "$0")"
 
-uv run pytype src/
+uv run pytype

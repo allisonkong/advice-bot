@@ -21,3 +21,11 @@ ignore_patterns = [
   ".venv/",
   "**/generated/**",
 ]
+
+[tool.pytype]
+inputs = [
+  "src/",
+]
+exclude = [
+  "**/generated/**",
+]
