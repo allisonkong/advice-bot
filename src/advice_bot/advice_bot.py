@@ -46,7 +46,9 @@ def _IsCommandEnabled(command_enum: params_pb2.Command,
     """Check if the command was enabled for the given channel."""
 
     # !help and !admin are special.
-    if command_enum == params_pb2.Command.HELP_COMMAND or command_enum == params_pb2.Command.ADMIN_COMMAND:
+    if command_enum in [
+            params_pb2.Command.HELP_COMMAND, params_pb2.Command.ADMIN_COMMAND
+    ]:
         return _IsChannelWatched(message)
 
     if message.guild is None:
