@@ -1,0 +1,9 @@
+[Unit]
+Description=Advice Bot prod instance
+
+[Service]
+Environment="PATH=/home/allison/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+ExecStart=/home/allison/src/advice-bot/run_prod.sh
+
+[Install]
+WantedBy=default.target
