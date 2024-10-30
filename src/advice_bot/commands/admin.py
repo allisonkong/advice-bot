@@ -51,8 +51,8 @@ Usage:
 
         if argv[1] == "list-instances":
             # All instances will report their self details.
-            response = (f"Advice Bot instance details:" +
-                        f"\nEnv: `{FLAGS.env}`" + f"\nID: `{_INSTANCE_ID}`" +
+            response = (f"Instance details:" + f"\nEnv: `{FLAGS.env}`" +
+                        f"\nID: `{_INSTANCE_ID}`" +
                         f"\nHostname: `{_HOSTNAME}`" +
                         f"\nStart time: `{_INSTANCE_START_TIME}`")
             return CommandResult(CommandStatus.OK, response)
