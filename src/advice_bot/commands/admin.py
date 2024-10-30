@@ -32,8 +32,8 @@ class AdminCommand(Command):
         return CommandResult(
             CommandStatus.OK, """
 Usage:
-  !admin list-instances
-  !admin kill <instance_id>
+  `!admin list-instances`
+  `!admin kill <instance_id>`
 """)
 
     def Execute(self, message: discord.Message, timestamp_micros: int,
@@ -48,8 +48,9 @@ Usage:
         if argv[1] == "list-instances":
             # All instances will report their self details.
             response = (f"Advice Bot instance details:" +
-                        f"\nID: {_INSTANCE_ID}" + f"\nHostname: {_HOSTNAME}" +
-                        f"\nStart time: {_INSTANCE_START_TIME}")
+                        f"\nID: `{_INSTANCE_ID}`" +
+                        f"\nHostname: `{_HOSTNAME}`" +
+                        f"\nStart time: `{_INSTANCE_START_TIME}`")
             return CommandResult(CommandStatus.OK, response)
         elif argv[1] == "kill":
             if len(argv) != 3:
