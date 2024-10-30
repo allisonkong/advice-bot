@@ -6,7 +6,7 @@ import shlex
 import time
 
 from advice_bot.commands.common import Command, CommandResult, CommandStatus
-from advice_bot.commands import monthly_lottery
+from advice_bot.commands import admin, monthly_lottery
 from advice_bot import params
 from advice_bot.proto import params_pb2
 from advice_bot.util import discord_util
@@ -14,6 +14,7 @@ from advice_bot.util import discord_util
 _COMMAND_PREFIX = "!"
 _COMMAND_REGEX = re.compile(_COMMAND_PREFIX + r'(\w+)\b.*')
 _COMMAND_ALIASES = {
+    "admin": params_pb2.Command.ADMIN_COMMAND,
     "help": params_pb2.Command.HELP_COMMAND,
     "roll": params_pb2.Command.MONTHLY_LOTTERY_COMMAND,
     "lotto": params_pb2.Command.MONTHLY_LOTTERY_COMMAND,
@@ -31,19 +32,23 @@ _MAX_MESSAGE_LENGTH = 255
 def _InitializeRegistry():
     global _COMMAND_REGISTRY
     _COMMAND_REGISTRY = {
-        params_pb2.HELP_COMMAND:
+        params_pb2.Command.ADMIN_COMMAND:
+            admin.AdminCommand(),
+        params_pb2.Command.HELP_COMMAND:
             HelpCommand(),
-        params_pb2.MONTHLY_LOTTERY_COMMAND:
+        params_pb2.Command.MONTHLY_LOTTERY_COMMAND:
             monthly_lottery.MonthlyLotteryCommand(),
     }
 
 
 def _IsCommandEnabled(command_enum: params_pb2.Command,
                       message: discord.Message):
-    # !help is special.
-    if command_enum == params_pb2.Command.HELP_COMMAND:
-        return _IsChannelWatched(message)
     """Check if the command was enabled for the given channel."""
+
+    # !help and !admin are special.
+    if command_enum == params_pb2.Command.HELP_COMMAND or command_enum == params_pb2.Command.ADMIN_COMMAND:
+        return _IsChannelWatched(message)
+
     if message.guild is None:
         return False
     guild_id = message.guild.id
@@ -67,9 +72,9 @@ def _IsChannelWatched(message: discord.Message):
     """Check if the message was sent in a channel that the bot is supposed
     to watch.
 
-    This differs from _IsCommandEnabled() because this is for deciding if we
-    should respond to an invalid command, while _IsCommandEnabled() is for
-    valid commands.
+    This slightly differs from _IsCommandEnabled() because this is for deciding
+    if we should respond to an invalid command, while _IsCommandEnabled() is
+    for valid commands.
     """
     if message.guild is None:
         return False
