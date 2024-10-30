@@ -1,3 +1,4 @@
+from absl import flags
 from absl import logging
 import datetime
 import discord
@@ -8,6 +9,8 @@ from advice_bot.commands.common import Command, CommandResult, CommandStatus
 from advice_bot import params
 from advice_bot.proto import params_pb2
 from advice_bot.util import discord_util
+
+FLAGS = flags.FLAGS
 
 # Initialized at import time.
 _HOSTNAME: str = None
@@ -48,7 +51,7 @@ Usage:
         if argv[1] == "list-instances":
             # All instances will report their self details.
             response = (f"Advice Bot instance details:" +
-                        f"\nID: `{_INSTANCE_ID}`" +
+                        f"\nEnv: `{FLAGS.env}`" + f"\nID: `{_INSTANCE_ID}`" +
                         f"\nHostname: `{_HOSTNAME}`" +
                         f"\nStart time: `{_INSTANCE_START_TIME}`")
             return CommandResult(CommandStatus.OK, response)
