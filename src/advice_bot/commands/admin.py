@@ -42,8 +42,9 @@ Usage:
     def Execute(self, message: discord.Message, timestamp_micros: int,
                 argv: list[str]) -> CommandResult:
         if not discord_util.IsAdmin(message.author):
-            return CommandResult(CommandStatus.PERMISSION_DENIED,
-                                 "You are not authorized to use this command.")
+            return CommandResult(
+                CommandStatus.PERMISSION_DENIED,
+                "You are not authorized to use this command, sorry.")
 
         if len(argv) == 1:
             return self.Usage()
