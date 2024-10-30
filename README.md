@@ -10,5 +10,6 @@
 
 ## Production notes
 
-* `systemctl --user (start|status|stop) advice_bot.service`
+* `systemctl --user (start|status|stop|restart) advice_bot.service`
 * `journalctl --user -u advice_bot.service`
+* See https://wiki.archlinux.org/title/Systemd/User
