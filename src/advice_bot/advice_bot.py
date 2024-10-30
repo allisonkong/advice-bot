@@ -1,3 +1,4 @@
+from absl import flags
 from absl import logging
 import asyncio
 import discord
@@ -10,6 +11,8 @@ from advice_bot.commands import admin, monthly_lottery
 from advice_bot import params
 from advice_bot.proto import params_pb2
 from advice_bot.util import discord_util
+
+FLAGS = flags.FLAGS
 
 _COMMAND_PREFIX = "!"
 _COMMAND_REGEX = re.compile(_COMMAND_PREFIX + r'(\w+)\b.*')
@@ -147,6 +150,8 @@ class AdviceBot(discord.Client):
     async def SendResponse(self, message: discord.Message, response: str):
         if not response:
             return
+        if FLAGS.env != "prod":
+            response = f"[{FLAGS.env}]\n{response}"
         await message.channel.send(response)
 
     async def ProcessCommand(self, command: str, message: discord.Message,
