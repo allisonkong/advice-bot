@@ -7,6 +7,7 @@
     * `gcloud auth application-default login`
 4. Install the proto compiler (`sudo apt install protobuf-compiler`)
 5. Build and run bot with `./run_dev.sh`
+6. Run unit tests (there aren't many) with `py.test`
 
 ## Production notes
 

@@ -11,6 +11,7 @@ dependencies = [
     "google-cloud-kms>=3.0.0",
     "mysql-connector-python>=9.1.0",
     "protobuf>=5.28.2",
+    "pytest>=8.3.3",
     "pytype>=2024.10.11",
     "yapf>=0.40.2",
 ]
