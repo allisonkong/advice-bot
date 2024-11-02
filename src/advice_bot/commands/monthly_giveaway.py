@@ -267,17 +267,17 @@ class MonthlyGiveawayCommand(Command):
             if prize == Prize.NO_PRIZE:
                 result_message += "Sorry, better luck next time."
             elif prize == Prize.GOODYBAG:
-                result_message += "Congratulations, you win a goodybag draw :penguin_dance:\n\n(DM a mod to claim.)"
+                result_message += "Congratulations, you win a goodybag draw :penguin_dance:\n\n(Please DM a mod to claim.)"
             elif prize == Prize.GP_2M:
-                result_message += "Congratulations, you win 2M gold :tada:\n\n(DM a mod to claim.)"
+                result_message += "Congratulations, you win 2M gold :tada:\n\n(Please DM a mod to claim.)"
             elif prize == Prize.GP_5M:
-                result_message += "Congratulations, you win 5M gold :dogdance: (DM a mod to claim.)"
+                result_message += "Congratulations, you win 5M gold :dogdance: (Please DM a mod to claim.)"
             elif prize == Prize.GP_10M:
-                result_message += "Congratulations, you win 10M gold :spoon: :spoon: :spoon:\n\n(DM a mod to claim.)"
+                result_message += "Congratulations, you win 10M gold :spoon: :spoon: :spoon:\n\n(Please DM a mod to claim.)"
             elif prize == Prize.CUSTOM_RANK:
-                result_message += "Congratulations, you win a custom rank for a week!\n\n(DM a deputy owner+ to claim.)"
+                result_message += "Congratulations, you win a custom rank for a week!\n\n(Please DM a deputy owner+ to claim.)"
             elif prize == Prize.CUSTOM_RANK_PLUSPLUS:
-                result_message += f"Congratulations, you win a super-special custom rank for a week! It's just like the normal custom rank, but you may also choose who receives it {_EVIL_KERMIT}\n\n(Note: the recipient is allowed to opt-out, and you can choose yourself. DM a deputy owner+ to claim.)"
+                result_message += f"Congratulations, you win a super-special custom rank for a week! It's just like the normal custom rank, but you may also choose who receives it {_EVIL_KERMIT}\n\n(Note: the recipient is allowed to opt-out, and you can choose yourself. Please DM a deputy owner+ to claim.)"
             else:
                 logging.error(f"Unexpected prize: {prize}")
                 result_message += "Sorry, better luck next time!"
