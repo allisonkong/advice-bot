@@ -41,11 +41,11 @@ def _GetLastParticipationMicros(discord_user_id: int) -> int | None:
 
 def _UpdateLastParticipationMicros(discord_user: discord.Member |
                                    discord.abc.User, timestamp_micros: int):
+    global _LAST_PARTICIPATION_CACHE
     # Invalidate cache.
-    _LAST_PARTICIPATION_CACHE = {}
     try:
         del _LAST_PARTICIPATION_CACHE[discord_user.id]
-    except Exception:
+    except KeyError:
         pass
 
     cnx = storage.Connect()
