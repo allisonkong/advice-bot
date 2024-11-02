@@ -73,7 +73,7 @@ Usage:
             uptime_seconds = s
 
             # All instances will report their self details.
-            response = (f"""Instance details:
+            response = f"""Instance details:
 ```
 Env: {FLAGS.env}
 ID: {_INSTANCE_ID}
@@ -82,7 +82,7 @@ Start time (UTC): {start_time_utc}
 Start time ({local_tz_name}): {start_time_pt}
 Uptime: {uptime_days} day(s) {uptime_hours} hour(s) {uptime_minutes} min(s) {uptime_seconds} sec(s)
 ```
-""")
+"""
             return CommandResult(CommandStatus.OK, response)
         elif argv[1] == "kill":
             if len(argv) != 3:
