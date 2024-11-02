@@ -21,7 +21,7 @@ def _GetLastParticipationMicros(discord_user_id: int) -> int | None:
     try:
         query = """
             SELECT last_participation_micros
-            FROM monthly_lottery
+            FROM monthly_giveaway
             WHERE discord_user_id = %(discord_user_id)s
         """
         cursor.execute(query, {
@@ -54,7 +54,7 @@ def _UpdateLastParticipationMicros(discord_user: discord.Member |
     try:
         discord_util.UpdateDiscordUserInTransaction(discord_user, cursor)
         query = """
-            INSERT INTO monthly_lottery
+            INSERT INTO monthly_giveaway
                 (discord_user_id, last_participation_micros)
             VALUES
                 (%(discord_user_id)s, %(timestamp_micros)s)
@@ -99,7 +99,7 @@ def _IsEligible(discord_user: discord.Member | discord.abc.User,
 
 def _GetAlreadyParticipatedResponse(discord_user: discord.Member |
                                     discord.abc.User, timestamp_micros: int):
-    suffix = "You have already participated in this month's lottery."
+    suffix = "You have already participated in this month's giveaway."
 
     choice = random.randint(1, 12)
     if choice == 1:
@@ -113,7 +113,7 @@ def _GetAlreadyParticipatedResponse(discord_user: discord.Member |
         return f"Beep beep boop?\n\n({suffix})"
     elif choice == 4:
         # Wizard of Oz
-        return f"Toto, I have a feeling that {suffix.lower()}"
+        return f"Toto, I've a feeling that {discord_user.mention} has already participated in this month's giveaway."
     elif choice == 5:
         # War Games
         f"A strange game. The only winning move is not to play.\n\n({suffix})"
@@ -132,23 +132,24 @@ def _GetAlreadyParticipatedResponse(discord_user: discord.Member |
         return f"It's been ~~84 years~~ {days_str}.\n\n({suffix})"
     elif choice == 7:
         # LOTR
-        return f"We've had one, yes. What about second lottery roll?\n\n({suffix})"
+        return f"We've had one, yes. What about second dice roll?\n\n({suffix})"
     elif choice == 8:
         # Star wars
         return f"How can you do this? This is outrageous! It's unfair!\n\n({suffix})"
     elif choice == 9:
         # Mean girls
-        return f"{discord_user.mention}, stop trying to make fetch happen. It's not going to happen.\n\n({suffix})"
+        return f"{discord_user.mention}, stop trying to make ~~fetch~~ second dice roll happen. It's not going to happen.\n\n({suffix})"
     elif choice == 10:
         # Princess Bride
-        return f"Hello. My name is Inigo Montoya. You have already participated in this month's lottery. Prepare to die."
-    elif choice == 11 and random.random() < 0.10:
-        # Barbie (this one's special so keep it rare)
-        return f"It is literally impossible to be a woman. You are so beautiful and so smart, and it kills me that you don't think you're good enough. Like, we have to always be extraordinary, but somehow we're always doing it wrong. You have to be thin, but not too thin. And you can never say you want to be thin. You have to say you want to be healthy, but also you have to be thin. You have to have money, but you can't ask for money because that's crass. You have to be a boss, but you can't be mean. You have to lead, but you can't squash other people's ideas. You're supposed to love being a mother but don't talk about your kids all the damn time. You have to be a career woman, but also always be looking out for other people. You have to answer for men's bad behavior, which is insane, but if you point that out, you're accused of complaining. You're supposed to stay pretty for men, but not so pretty that you tempt them too much or that you threaten other women because you're supposed to be a part of the sisterhood. But always stand out and always be grateful. But never forget that the system is rigged. So find a way to acknowledge that but also always be grateful. You have to never get old, never be rude, never show off, never be selfish, never fall down, never fail, never show fear, never get out of line. It's too hard! It's too contradictory and nobody gives you a medal or says thank you! And it turns out in fact that not only are you doing everything wrong, but also everything is your fault. I'm just so tired of watching myself and every single other woman tie herself into knots so that people will like us. And if all of that is also true for a doll just representing women, then I don't even know.\n\n({suffix})"
-    elif choice == 12:
+        return f"Hello. My name is Inigo Montoya. You have already participated in this month's giveaway. Prepare to die."
+    elif choice == 11:
         # Avatar the Last Airbender
-        return f"It's time for you to look inward, and start asking yourself the big questions. Who are you? And have you already participated in the lottery this month?\n\n(Yes, yes you have.)"
+        return f"It's time for you to look inward, and start asking yourself the big questions. Who are you? And have you already participated in the giveaway this month?\n\n(Yes, yes you have.)"
     else:
+        # Should never happen.
+        logging.error(
+            "Failed to choose a participation response, falling back to default response."
+        )
         return f"I'm sorry {discord_user.mention}, I'm afraid I can't do that.\n\n({suffix})"
 
 
@@ -181,7 +182,7 @@ def _Participate():
     return prizes
 
 
-class MonthlyLotteryCommand(Command):
+class MonthlyGiveawayCommand(Command):
 
     def Execute(self, message: discord.Message, timestamp_micros: int,
                 argv: list[str]) -> CommandResult:
@@ -195,7 +196,7 @@ class MonthlyLotteryCommand(Command):
         logging.info(prizes)
 
         today_str = _DateFromMicros(timestamp_micros).strftime("%B %Y")
-        result_message = f"{message.author.mention} is participating in the lottery for {today_str}!\n\n"
+        result_message = f"{message.author.mention} is participating in the giveaway for {today_str}!\n\n"
         for i in range(len(prizes)):
             prize = prizes[i]
             result_message += f"**Roll #{i + 1}**: "

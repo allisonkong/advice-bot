@@ -4,7 +4,7 @@ enum Command {
   UNKNOWN_COMMAND = 1;
   ADMIN_COMMAND = 2;
   HELP_COMMAND = 3;
-  MONTHLY_LOTTERY_COMMAND = 4;
+  MONTHLY_GIVEAWAY_COMMAND = 4;
 }
 
 message ChannelList {

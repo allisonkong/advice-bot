@@ -7,7 +7,7 @@ import shlex
 import time
 
 from advice_bot.commands.common import Command, CommandResult, CommandStatus
-from advice_bot.commands import admin, monthly_lottery
+from advice_bot.commands import admin, monthly_giveaway
 from advice_bot import params
 from advice_bot.proto import params_pb2
 from advice_bot.util import discord_util
@@ -19,15 +19,15 @@ _COMMAND_REGEX = re.compile(_COMMAND_PREFIX + r'(\w+)\b.*')
 _COMMAND_ALIASES = {
     "admin": params_pb2.Command.ADMIN_COMMAND,
     "help": params_pb2.Command.HELP_COMMAND,
-    "roll": params_pb2.Command.MONTHLY_LOTTERY_COMMAND,
-    "lotto": params_pb2.Command.MONTHLY_LOTTERY_COMMAND,
+    "roll": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
+    "participate": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
 }
 _COMMAND_REGISTRY = None
 _COMMAND_DESCRIPTIONS = {
-    params_pb2.Command.MONTHLY_LOTTERY_COMMAND:
-        "`!roll`: Participate in the monthly lottery/giveaway. You may also use `!lotto` as an alias for this command.",
+    params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND:
+        "`!roll`: Participate in the monthly giveaway. May the odds be ever in your favor :slight_smile:\n* `!participate` may be used as an alias for `!roll`",
     params_pb2.Command.HELP_COMMAND:
-        "`!help`: Print the list of available commands.",
+        "`!help`: Prints a list of available commands.",
 }
 _MAX_MESSAGE_LENGTH = 255
 
@@ -39,8 +39,8 @@ def _InitializeRegistry():
             admin.AdminCommand(),
         params_pb2.Command.HELP_COMMAND:
             HelpCommand(),
-        params_pb2.Command.MONTHLY_LOTTERY_COMMAND:
-            monthly_lottery.MonthlyLotteryCommand(),
+        params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND:
+            monthly_giveaway.MonthlyGiveawayCommand(),
     }
 
 
