@@ -18,15 +18,16 @@ class MockRandom():
 
 def test_drop_table():
     drop_table = DropTable([
-        ("a", 0.5),
-        ("b", 0.25),
-        ("c", 0.125),
-        (DropTable([
-            ("d1", 0.25),
-            ("d2", 0.25),
-            ("d3", 0.25),
-            ("d4", 0.25),
-        ]), 0.125),
+        (0.5, "a"),
+        (0.25, "b"),
+        (0.125, "c"),
+        (0.125,
+         DropTable([
+             (0.25, "d1"),
+             (0.25, "d2"),
+             (0.25, "d3"),
+             (0.25, "d4"),
+         ])),
     ])
 
     assert drop_table.Roll(MockRandom([0.3])) == "a"

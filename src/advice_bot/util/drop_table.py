@@ -1,13 +1,14 @@
 from absl import logging
 import random
 import typing
+import sys
 
 
 class DropTable():
     """Implements a drop table.
 
     Members:
-        outcomes: list of (outcome, probability) tuples. If an output value is
+        outcomes: list of (probability, outcome) tuples. If an output value is
         itself an instance of DropTable, we will recurse into that sub-table.
     """
 
@@ -16,13 +17,17 @@ class DropTable():
 
         # Check sum of probabilities.
         net_probability = 0
-        for outcome, p in self.outcomes:
+        for p, outcome in self.outcomes:
             if p <= 0:
                 logging.fatal("Probabilities must be positive.")
+                # Make sure fatal() actually works, if constructed at module
+                # import time before absl.run().
+                sys.exit(1)
             net_probability += p
         epsilon = 1e-9
         if abs(net_probability - 1.0) > epsilon:
             logging.fatal("Probabilities must total 1.")
+            sys.exit(1)
 
     def Roll(self, rng=None):
         """Rolls the drop table once.
@@ -35,7 +40,7 @@ class DropTable():
             rng = random.SystemRandom()
 
         roll = rng.random()
-        for outcome, p in self.outcomes:
+        for p, outcome in self.outcomes:
             if roll >= p:
                 roll -= p
                 continue

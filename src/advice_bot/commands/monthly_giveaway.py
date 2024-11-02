@@ -6,26 +6,42 @@ import random
 
 from advice_bot.commands.common import Command, CommandResult, CommandStatus
 from advice_bot.database import storage
-from advice_bot.util import discord_util, drop_table
+from advice_bot.util import discord_util
+from advice_bot.util.drop_table import DropTable
 
 
 class Prize(enum.IntEnum):
+    # Next ID: 7
     NO_PRIZE = 0
     GOODYBAG = 1
-    CASH_2M = 2
+    GP_2M = 2
+    GP_5M = 5
+    GP_10M = 6
     CUSTOM_RANK = 3
-    CUSTOM_RANK_PLUS = 4
+    CUSTOM_RANK_SPECIAL = 4
 
 
-_PRIZE_TABLE = drop_table.DropTable([
-    (Prize.NO_PRIZE, 0.9375),
-    (drop_table.DropTable([
-        (Prize.GOODYBAG, 0.3),
-        (Prize.CASH_2M, 0.3),
-        (Prize.CUSTOM_RANK, 0.3),
-        (Prize.CUSTOM_RANK_PLUS, 0.1),
-    ]), 0.0625),
+# yapf: disable
+_PRIZE_TABLE = DropTable([
+    (0.95, Prize.NO_PRIZE),
+    # Prize sub-table
+    (0.05, DropTable([
+        # Goodybag
+        (0.33, Prize.GOODYBAG),
+        # Cash
+        (0.33, DropTable([
+             (0.90, Prize.GP_2M),
+             (0.09, Prize.GP_5M),
+             (0.01, Prize.GP_10M),
+         ])),
+        # Custom rank
+        (0.34, DropTable([
+             (0.90, Prize.CUSTOM_RANK),
+             (0.10, Prize.CUSTOM_RANK_SPECIAL),
+         ])),
+    ])),
 ])
+# yapf: enable
 
 _ROLLS = 4
 _EVIL_KERMIT = "<:evil_Kermit:626526532256661524>"
@@ -235,11 +251,15 @@ class MonthlyGiveawayCommand(Command):
                 result_message += "Sorry, better luck next time."
             elif prize == Prize.GOODYBAG:
                 result_message += "Congratulations, you win a goodybag draw!"
-            elif prize == Prize.CASH_2M:
+            elif prize == Prize.GP_2M:
                 result_message += "Congratulations, you win 2M gold. Nice!"
+            elif prize == Prize.GP_5M:
+                result_message += "Congratulations, you win 5M gold. Very nice!"
+            elif prize == Prize.GP_10M:
+                result_message += "Congratulations, you win 10M gold. You absolute :spoon:!"
             elif prize == Prize.CUSTOM_RANK:
                 result_message += "Congratulations, you win a custom rank for a week!"
-            elif prize == Prize.CUSTOM_RANK_PLUS:
+            elif prize == Prize.CUSTOM_RANK_SPECIAL:
                 result_message += f"Congratulations, you win a super-special custom rank for a week! It's like the normal custom rank, but you may also choose who receives it {_EVIL_KERMIT}\n\n(Note: the recipient is allowed to opt-out, and you can choose yourself.)"
             else:
                 logging.error(f"Unexpected prize: {prize}")
