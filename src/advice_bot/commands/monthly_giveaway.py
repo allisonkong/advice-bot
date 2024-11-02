@@ -101,7 +101,7 @@ def _GetAlreadyParticipatedResponse(discord_user: discord.Member |
                                     discord.abc.User, timestamp_micros: int):
     suffix = "You have already participated in this month's giveaway."
 
-    choice = random.randint(1, 12)
+    choice = random.randint(1, 11)
     if choice == 1:
         # 2001
         return f"I'm sorry {discord_user.mention}, I'm afraid I can't do that.\n\n({suffix})"
