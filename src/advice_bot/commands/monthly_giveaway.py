@@ -222,8 +222,13 @@ class MonthlyGiveawayCommand(Command):
 
     def Execute(self, message: discord.Message, timestamp_micros: int,
                 argv: list[str]) -> CommandResult:
-        # For testing.
-        if discord_util.IsAdmin(message.author) and "--list_responses" in argv:
+        # Handle flags for testing.
+        if "--print_responses" in argv:
+            if not discord_util.IsAdmin(message.author):
+                return CommandResult(
+                    CommandStatus.PERMISSION_DENIED,
+                    f"I'm sorry {message.author.mention}, I'm afraid I can't do that.\n\n(You are not authorized to use that flag.)"
+                )
             full_response = "All possible responses:"
             for i in range(1, _NUM_ALREADY_PARTICIPATED_RESPONSES + 1):
                 response = _GetAlreadyParticipatedResponse(message.author,
@@ -231,9 +236,19 @@ class MonthlyGiveawayCommand(Command):
                                                            choice=i)
                 full_response += f"\n\n{i}: {response}"
             return CommandResult(CommandStatus.OK, full_response)
+        elif "--print_table" in argv:
+            if not discord_util.IsAdmin(message.author):
+                return CommandResult(
+                    CommandStatus.PERMISSION_DENIED,
+                    f"I'm sorry {message.author.mention}, I'm afraid I can't do that.\n\n(You are not authorized to use that flag.)"
+                )
+            return CommandResult(CommandStatus.OK,
+                                 f"\n```\n{str(_PRIZE_TABLE)}\n```")
+        elif len(argv) > 1:
+            return CommandResult(CommandStatus.INVALID_ARGUMENT,
+                                 "Unrecognized flag(s): " + " ".join(argv[1:]))
 
-        if discord_util.IsAdmin(message.author) and "--print_table" in argv:
-            return CommandResult(CommandStatus.OK, str(_PRIZE_TABLE))
+        # Main flow: participate in giveaway.
 
         if not _IsEligible(message.author, timestamp_micros, argv):
             return CommandResult(
