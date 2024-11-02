@@ -132,26 +132,33 @@ def _IsEligible(discord_user: discord.Member | discord.abc.User,
     return last_date < start_of_month
 
 
-def _GetAlreadyParticipatedResponse(discord_user: discord.Member |
-                                    discord.abc.User, timestamp_micros: int):
-    suffix = "You have already participated in this month's giveaway."
+_NUM_ALREADY_PARTICIPATED_RESPONSES = 11
 
-    choice = random.randint(1, 11)
+
+def _GetAlreadyParticipatedResponse(discord_user: discord.Member |
+                                    discord.abc.User,
+                                    timestamp_micros: int,
+                                    choice=None):
+    suffix = "You have already participated in this month's giveaway"
+
+    if choice is None:
+        choice = random.randint(1, _NUM_ALREADY_PARTICIPATED_RESPONSES)
+
     if choice == 1:
         # 2001
-        return f"I'm sorry {discord_user.mention}, I'm afraid I can't do that.\n\n({suffix})"
+        return f"I'm sorry {discord_user.mention}, I'm afraid I can't do that.\n\n({suffix}.)"
     elif choice == 2:
         # Matrix
-        return f"Do not try and bend the spoon. That's impossible. Instead... only try to realize the truth.\n\nWhat truth?\n\nThat {suffix.lower()}"
+        return f"Do not try and bend the spoon. That's impossible. Instead... only try to realize the truth.\n\nWhat truth?\n\nThat {suffix.lower()} {discord_user.mention}."
     elif choice == 3:
         # (not a quote)
-        return f"Beep beep boop?\n\n({suffix})"
+        return f"Beep beep boop?\n\n({suffix} {discord_user.mention}.)"
     elif choice == 4:
         # Wizard of Oz
         return f"Toto, I've a feeling that {discord_user.mention} has already participated in this month's giveaway."
     elif choice == 5:
         # War Games
-        f"A strange game. The only winning move is not to play.\n\n({suffix})"
+        return f"A strange game. The only winning move is not to play.\n\n({suffix} {discord_user.mention}.)"
     elif choice == 6:
         # Titanic
         last_participation_micros = _GetLastParticipationMicros(discord_user.id)
@@ -164,28 +171,28 @@ def _GetAlreadyParticipatedResponse(discord_user: discord.Member |
         now_date = _DateFromMicros(timestamp_micros)
         days = (now_date - last_date).days
         days_str = "{} {}".format(days, "days" if days != 1 else "day")
-        return f"It's been ~~84 years~~ {days_str}.\n\n({suffix})"
+        return f"It's been ~~84 years~~ {days_str}.\n\n({suffix} {discord_user.mention}.)"
     elif choice == 7:
         # LOTR
-        return f"We've had one, yes. What about second dice roll?\n\n({suffix})"
+        return f"We've had one, yes. What about second dice roll?\n\n({suffix} {discord_user.mention})"
     elif choice == 8:
         # Star wars
-        return f"How can you do this? This is outrageous! It's unfair!\n\n({suffix})"
+        return f"How can you do this? This is outrageous! It's unfair!\n\n({suffix} {discord_user.mention}.)"
     elif choice == 9:
         # Mean girls
-        return f"{discord_user.mention}, stop trying to make ~~fetch~~ second dice roll happen. It's not going to happen.\n\n({suffix})"
+        return f"{discord_user.mention}, stop trying to make ~~fetch~~ second dice roll happen. It's not going to happen.\n\n({suffix}.)"
     elif choice == 10:
         # Princess Bride
-        return f"Hello. My name is Inigo Montoya. You have already participated in this month's giveaway. Prepare to die."
+        return f"Hello. My name is Inigo Montoya. You have already participated in this month's giveaway. Prepare to die.\n\n({discord_user.mention})"
     elif choice == 11:
         # Avatar the Last Airbender
-        return f"It's time for you to look inward, and start asking yourself the big questions. Who are you? And have you already participated in the giveaway this month?\n\n(Yes, yes you have.)"
+        return f"It's time for you to look inward, and start asking yourself the big questions. Who are you? And have you already participated in the giveaway this month?\n\n(Yes, yes you have {discord_user.mention}.)"
     else:
         # Should never happen.
         logging.error(
             "Failed to choose a participation response, falling back to default response."
         )
-        return f"I'm sorry {discord_user.mention}, I'm afraid I can't do that.\n\n({suffix})"
+        return f"I'm sorry {discord_user.mention}, I'm afraid I can't do that.\n\n({suffix}.)"
 
 
 def _Participate():
@@ -199,6 +206,17 @@ class MonthlyGiveawayCommand(Command):
 
     def Execute(self, message: discord.Message, timestamp_micros: int,
                 argv: list[str]) -> CommandResult:
+        # For testing.
+        logging.info(argv)
+        if discord_util.IsAdmin(message.author) and "--list_responses" in argv:
+            full_response = "All possible responses:"
+            for i in range(1, _NUM_ALREADY_PARTICIPATED_RESPONSES + 1):
+                response = _GetAlreadyParticipatedResponse(message.author,
+                                                           timestamp_micros,
+                                                           choice=i)
+                full_response += f"\n\n{i}: {response}"
+            return CommandResult(CommandStatus.OK, full_response)
+
         if not _IsEligible(message.author, timestamp_micros, argv):
             return CommandResult(
                 CommandStatus.PERMISSION_DENIED,

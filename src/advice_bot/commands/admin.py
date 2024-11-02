@@ -35,7 +35,7 @@ class AdminCommand(Command):
         return CommandResult(
             CommandStatus.OK, """
 Usage:
-  `!admin list-instances`
+  `!admin status`
   `!admin kill <instance_id>`
 """)
 
@@ -49,7 +49,7 @@ Usage:
         if len(argv) == 1:
             return self.Usage()
 
-        if argv[1] == "list-instances":
+        if argv[1] == "status":
             # All instances will report their self details.
             response = (f"Instance details:" + f"\nEnv: `{FLAGS.env}`" +
                         f"\nID: `{_INSTANCE_ID}`" +
