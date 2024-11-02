@@ -8,6 +8,28 @@ from advice_bot.commands.common import Command, CommandResult, CommandStatus
 from advice_bot.database import storage
 from advice_bot.util import discord_util, drop_table
 
+
+class Prize(enum.IntEnum):
+    NO_PRIZE = 0
+    GOODYBAG = 1
+    CASH_2M = 2
+    CUSTOM_RANK = 3
+    CUSTOM_RANK_PLUS = 4
+
+
+_PRIZE_TABLE = drop_table.DropTable([
+    (Prize.NO_PRIZE, 0.9375),
+    (drop_table.DropTable([
+        (Prize.GOODYBAG, 0.3),
+        (Prize.CASH_2M, 0.3),
+        (Prize.CUSTOM_RANK, 0.3),
+        (Prize.CUSTOM_RANK_PLUS, 0.1),
+    ]), 0.0625),
+])
+
+_ROLLS = 4
+_EVIL_KERMIT = "<:evil_Kermit:626526532256661524>"
+
 _LAST_PARTICIPATION_CACHE = {}
 
 
@@ -39,8 +61,8 @@ def _GetLastParticipationMicros(discord_user_id: int) -> int | None:
         cnx.close()
 
 
-def _UpdateLastParticipationMicros(discord_user: discord.Member |
-                                   discord.abc.User, timestamp_micros: int):
+def _RecordGiveawayOutcome(discord_user: discord.Member | discord.abc.User,
+                           timestamp_micros: int, prizes: list[Prize]):
     global _LAST_PARTICIPATION_CACHE
     # Invalidate cache.
     try:
@@ -53,19 +75,32 @@ def _UpdateLastParticipationMicros(discord_user: discord.Member |
     cursor = cnx.cursor()
     try:
         discord_util.UpdateDiscordUserInTransaction(discord_user, cursor)
-        query = """
-            INSERT INTO monthly_giveaway
-                (discord_user_id, last_participation_micros)
-            VALUES
-                (%(discord_user_id)s, %(timestamp_micros)s)
-            ON DUPLICATE KEY UPDATE
-                last_participation_micros = %(timestamp_micros)s
-        """
-        cursor.execute(
-            query, {
-                "discord_user_id": discord_user.id,
-                "timestamp_micros": timestamp_micros,
-            })
+        for i in range(len(prizes)):
+            query = """
+                INSERT INTO monthly_giveaway_rolls
+                    (
+                        discord_user_id,
+                        timestamp_micros,
+                        sequence_index,
+                        prize
+                    )
+                VALUES
+                    (
+                        %(discord_user_id)s,
+                        %(timestamp_micros)s,
+                        %(sequence_index)s,
+                        %(prize)s
+                    )
+                ON DUPLICATE KEY UPDATE
+                    prize = %(prize)s
+            """
+            cursor.execute(
+                query, {
+                    "discord_user_id": discord_user.id,
+                    "timestamp_micros": timestamp_micros,
+                    "sequence_index": i,
+                    "prize": prizes[i],
+                })
         cnx.commit()
     except Exception:
         cnx.rollback()
@@ -153,28 +188,6 @@ def _GetAlreadyParticipatedResponse(discord_user: discord.Member |
         return f"I'm sorry {discord_user.mention}, I'm afraid I can't do that.\n\n({suffix})"
 
 
-class Prize(enum.IntEnum):
-    NO_PRIZE = 0
-    GOODYBAG = 1
-    CASH_2M = 2
-    CUSTOM_RANK = 3
-    CUSTOM_RANK_PLUS = 4
-
-
-_PRIZE_TABLE = drop_table.DropTable([
-    (Prize.NO_PRIZE, 0.9375),
-    (drop_table.DropTable([
-        (Prize.GOODYBAG, 0.3),
-        (Prize.CASH_2M, 0.3),
-        (Prize.CUSTOM_RANK, 0.3),
-        (Prize.CUSTOM_RANK_PLUS, 0.1),
-    ]), 0.0625),
-])
-
-_ROLLS = 4
-_EVIL_KERMIT = "<:evil_Kermit:626526532256661524>"
-
-
 def _Participate():
     prizes = []
     for i in range(_ROLLS):
@@ -211,10 +224,10 @@ class MonthlyGiveawayCommand(Command):
             elif prize == Prize.CUSTOM_RANK_PLUS:
                 result_message += f"Congratulations, you win a super-special custom rank for a week! It's like the normal custom rank, but you may also choose who receives it {_EVIL_KERMIT}\n\n(Note: the recipient is allowed to opt-out, and you can choose yourself.)"
             else:
-                logging.warning(f"Unexpected prize: {prize}")
+                logging.error(f"Unexpected prize: {prize}")
                 result_message += "Sorry, better luck next time!"
 
             result_message += "\n\n"
 
-        _UpdateLastParticipationMicros(message.author, timestamp_micros)
+        _RecordGiveawayOutcome(message.author, timestamp_micros, prizes)
         return CommandResult(CommandStatus.OK, result_message)
