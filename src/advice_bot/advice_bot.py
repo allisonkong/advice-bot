@@ -23,12 +23,6 @@ _COMMAND_ALIASES = {
     "participate": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
 }
 _COMMAND_REGISTRY = None
-_COMMAND_DESCRIPTIONS = {
-    params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND:
-        "`!roll`: Participate in the monthly giveaway. May the odds be ever in your favor :slight_smile:\n* `!participate` may be used as an alias for `!roll`",
-    params_pb2.Command.HELP_COMMAND:
-        "`!help`: Prints a list of available commands.",
-}
 _MAX_MESSAGE_LENGTH = 255
 
 
@@ -102,18 +96,23 @@ class HelpCommand(Command):
         return CommandResult(CommandStatus.OK, help_msg)
 
     def GetHelpMsg(self, message: discord.Message):
-        # List of commands available in the current channel.
-        available_commands = []
-        for command_enum in sorted(_COMMAND_DESCRIPTIONS):
-            if _IsCommandEnabled(command_enum, message):
-                available_commands.append(command_enum)
+        help_msg = "Available commands:"
+        show_help_msg = False
 
-        if len(available_commands) == 0:
+        # List the commands available in the current channel.
+        if _IsCommandEnabled(params_pb2.Command.ADMIN_COMMAND, message):
+            help_msg += "\n* `!admin`: Manage bot instance(s)."
+            show_help_msg = True
+        if _IsCommandEnabled(params_pb2.Command.HELP_COMMAND, message):
+            help_msg += "\n* `!help`: List available commands."
+            show_help_msg = True
+        if _IsCommandEnabled(params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
+                             message):
+            help_msg += "\n* `!roll` or `!participate`: Participate in the monthly giveaway. See pin: https://discord.com/channels/480809905138171924/1302165779336396860/1302165889931546644."
+            show_help_msg = True
+
+        if not show_help_msg:
             return ""
-
-        help_msg = "Available commands in this channel:"
-        for command_enum in available_commands:
-            help_msg += f"\n* {_COMMAND_DESCRIPTIONS[command_enum]}"
         return help_msg
 
 
