@@ -18,7 +18,7 @@ class Prize(enum.IntEnum):
     GP_5M = 5
     GP_10M = 6
     CUSTOM_RANK = 3
-    CUSTOM_RANK_SPECIAL = 4
+    CUSTOM_RANK_PLUSPLUS = 4
 
 
 # yapf: disable
@@ -37,7 +37,7 @@ _PRIZE_TABLE = DropTable([
         # Custom rank
         (0.34, DropTable([
              (0.90, Prize.CUSTOM_RANK),
-             (0.10, Prize.CUSTOM_RANK_SPECIAL),
+             (0.10, Prize.CUSTOM_RANK_PLUSPLUS),
          ])),
     ])),
 ])
@@ -223,7 +223,6 @@ class MonthlyGiveawayCommand(Command):
     def Execute(self, message: discord.Message, timestamp_micros: int,
                 argv: list[str]) -> CommandResult:
         # For testing.
-        logging.info(argv)
         if discord_util.IsAdmin(message.author) and "--list_responses" in argv:
             full_response = "All possible responses:"
             for i in range(1, _NUM_ALREADY_PARTICIPATED_RESPONSES + 1):
@@ -232,6 +231,9 @@ class MonthlyGiveawayCommand(Command):
                                                            choice=i)
                 full_response += f"\n\n{i}: {response}"
             return CommandResult(CommandStatus.OK, full_response)
+
+        if discord_util.IsAdmin(message.author) and "--print_table" in argv:
+            return CommandResult(CommandStatus.OK, str(_PRIZE_TABLE))
 
         if not _IsEligible(message.author, timestamp_micros, argv):
             return CommandResult(
@@ -259,7 +261,7 @@ class MonthlyGiveawayCommand(Command):
                 result_message += "Congratulations, you win 10M gold. You absolute :spoon:!"
             elif prize == Prize.CUSTOM_RANK:
                 result_message += "Congratulations, you win a custom rank for a week!"
-            elif prize == Prize.CUSTOM_RANK_SPECIAL:
+            elif prize == Prize.CUSTOM_RANK_PLUSPLUS:
                 result_message += f"Congratulations, you win a super-special custom rank for a week! It's like the normal custom rank, but you may also choose who receives it {_EVIL_KERMIT}\n\n(Note: the recipient is allowed to opt-out, and you can choose yourself.)"
             else:
                 logging.error(f"Unexpected prize: {prize}")

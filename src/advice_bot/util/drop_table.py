@@ -1,4 +1,5 @@
 from absl import logging
+import pprint
 import random
 import typing
 import sys
@@ -49,3 +50,9 @@ class DropTable():
                 return outcome.Roll(rng)
             return outcome
         logging.fatal("Failed to choose outcome - this should never happen.")
+
+    def __str__(self):
+        return pprint.pformat(self.outcomes, indent=2)
+
+    def __repr__(self):
+        return str(self)
