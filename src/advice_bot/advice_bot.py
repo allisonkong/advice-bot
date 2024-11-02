@@ -108,7 +108,7 @@ class HelpCommand(Command):
             show_help_msg = True
         if _IsCommandEnabled(params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
                              message):
-            help_msg += "\n* `!roll` or `!participate`: Participate in the monthly giveaway. See pin: https://discord.com/channels/480809905138171924/1302165779336396860/1302165889931546644."
+            help_msg += "\n* `!roll` or `!participate`: Participate in the monthly giveaway. See pin for details: https://discord.com/channels/480809905138171924/1302165779336396860/1302165889931546644."
             show_help_msg = True
 
         if not show_help_msg:
