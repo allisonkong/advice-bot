@@ -44,7 +44,26 @@ _PRIZE_TABLE = DropTable([
 # yapf: enable
 
 _ROLLS = 4
-_EVIL_KERMIT = "<:evil_Kermit:626526532256661524>"
+
+
+# Custom emojis need to be fully qualified. Look them up with \:emoji_name:
+class Emojis(enum.StrEnum):
+    # Default
+    PARTYING_FACE = ":partying_face:"
+    TADA = ":tada:"
+    SUNGLASSES = ":sunglasses:"
+    FACE_WITH_MONOCLE = ":face_with_monocle:"
+    # Custom, static
+    EVIL_KERMIT = "<:evil_Kermit:626526532256661524>"
+    NOOT_LIKE_THIS = "<:nootLikeThis:748245017679888484>"
+    ANGRY_SNOOT = "<:angrySnoot:697276982018179102>"
+    NOT_LIKE_DUCK = "<:notlikeduck:631902811579219973>"
+    # Custom, animated
+    DOG_DANCE = "<a:dogdance:628401377508458516>"
+    PENGUIN_DANCE = "<a:penguin_dance:760257825737408573>"
+    KANKAN = "<a:KanKan:755671122451890237>"
+    CRAB_RAVE = "<a:crab_rave:628404069718949892>"
+
 
 _LAST_PARTICIPATION_CACHE = {}
 
@@ -132,10 +151,10 @@ def _DateFromMicros(timestamp_micros: int):
 
 
 def _IsEligible(discord_user: discord.Member | discord.abc.User,
-                timestamp_micros: int, argv: list[str]) -> bool:
+                timestamp_micros: int,
+                force=False) -> bool:
     # For ease of testing.
-    if discord_util.IsAdmin(discord_user) and ("-f" in argv or
-                                               "--force" in argv):
+    if force:
         return True
 
     last_participation_micros = _GetLastParticipationMicros(discord_user.id)
@@ -162,19 +181,19 @@ def _GetAlreadyParticipatedResponse(discord_user: discord.Member |
 
     if choice == 1:
         # 2001
-        return f"I'm sorry {discord_user.mention}, I'm afraid I can't do that.\n\n({suffix}.)"
+        return f"I'm sorry {discord_user.mention}, I'm afraid I can't do that.\n\n({suffix})"
     elif choice == 2:
         # Matrix
         return f"Do not try and bend the spoon. That's impossible. Instead... only try to realize the truth.\n\nWhat truth?\n\nThat {suffix.lower()} {discord_user.mention}."
     elif choice == 3:
         # (not a quote)
-        return f"Beep beep boop?\n\n({suffix} {discord_user.mention}.)"
+        return f"Beep beep boop? {Emojis.FACE_WITH_MONOCLE}\n\n({suffix} {discord_user.mention})"
     elif choice == 4:
         # Wizard of Oz
         return f"Toto, I've a feeling that {discord_user.mention} has already participated in this month's giveaway."
     elif choice == 5:
         # War Games
-        return f"A strange game. The only winning move is not to play.\n\n({suffix} {discord_user.mention}.)"
+        return f"A strange game. The only winning move is not to play.\n\n({suffix} {discord_user.mention})"
     elif choice == 6:
         # Titanic
         last_participation_micros = _GetLastParticipationMicros(discord_user.id)
@@ -187,28 +206,61 @@ def _GetAlreadyParticipatedResponse(discord_user: discord.Member |
         now_date = _DateFromMicros(timestamp_micros)
         days = (now_date - last_date).days
         days_str = "{} {}".format(days, "days" if days != 1 else "day")
-        return f"It's been ~~84 years~~ {days_str}.\n\n({suffix} {discord_user.mention}.)"
+        return f"It's been ~~84 years~~ {days_str}.\n\n({suffix} {discord_user.mention})"
     elif choice == 7:
         # LOTR
         return f"We've had one, yes. What about second dice roll?\n\n({suffix} {discord_user.mention})"
     elif choice == 8:
         # Star wars
-        return f"How can you do this? This is outrageous! It's unfair!\n\n({suffix} {discord_user.mention}.)"
+        return f"How can you do this? This is outrageous! It's unfair!\n\n({suffix} {discord_user.mention})"
     elif choice == 9:
         # Mean girls
-        return f"{discord_user.mention}, stop trying to make ~~fetch~~ second dice roll happen. It's not going to happen.\n\n({suffix}.)"
+        return f"{discord_user.mention}, stop trying to make ~~fetch~~ second dice roll happen. It's not going to happen.\n\n({suffix})"
     elif choice == 10:
         # Princess Bride
         return f"Hello. My name is Inigo Montoya. You have already participated in this month's giveaway. Prepare to die.\n\n({discord_user.mention})"
     elif choice == 11:
         # Avatar the Last Airbender
-        return f"It's time for you to look inward, and start asking yourself the big questions. Who are you? And have you already participated in the giveaway this month?\n\n(Yes, yes you have {discord_user.mention}.)"
+        return f"It's time for you to look inward, and start asking yourself the big questions. Who are you? And have you already participated in the giveaway this month?\n\n(Yes, yes you have {discord_user.mention})"
     else:
         # Should never happen.
         logging.error(
             "Failed to choose a participation response, falling back to default response."
         )
-        return f"I'm sorry {discord_user.mention}, I'm afraid I can't do that.\n\n({suffix}.)"
+        return f"I'm sorry {discord_user.mention}, I'm afraid I can't do that.\n\n({suffix})"
+
+
+def _GetPrizeDescriptions(prizes: list[Prize]):
+    num_prizes = sum(1 if prize != Prize.NO_PRIZE else 0 for prize in prizes)
+
+    text = ""
+    for i in range(len(prizes)):
+        prize = prizes[i]
+        text += f"**Roll #{i + 1}**: "
+        if prize == Prize.NO_PRIZE:
+            text += f"Sorry, better luck next time."
+            if i == len(prizes) - 1 and num_prizes == 0:
+                text += " " + random.choice([
+                    Emojis.NOOT_LIKE_THIS, Emojis.ANGRY_SNOOT,
+                    Emojis.NOT_LIKE_DUCK
+                ])
+        elif prize == Prize.GOODYBAG:
+            text += f"Congratulations, you win a goodybag draw! {Emojis.PARTYING_FACE}\n\n(Please DM a mod to claim.)"
+        elif prize == Prize.GP_2M:
+            text += f"Congratulations, you win 2M gold. Nice! {Emojis.TADA}\n\n(Please DM a mod to claim.)"
+        elif prize == Prize.GP_5M:
+            text += f"Congratulations, you win 5M gold. Very nice! {Emojis.DOG_DANCE}\n\n(Please DM a mod to claim.)"
+        elif prize == Prize.GP_10M:
+            text += f"Congratulations, you win 10M gold. Incredible! {Emojis.CRAB_RAVE}\n\n(Please DM a mod to claim.)"
+        elif prize == Prize.CUSTOM_RANK:
+            text += f"Congratulations, you win a custom rank for a week :sunglasses:\n\n(Please DM a deputy owner+ to claim.)"
+        elif prize == Prize.CUSTOM_RANK_PLUSPLUS:
+            text += f"Congratulations, you win a super-special custom rank for a week! It's just like the normal custom rank, but you also get to choose who receives it {Emojis.EVIL_KERMIT}\n\n(Note: the recipient may opt-out, and you may choose yourself if you wish. Please DM a deputy owner+ to claim.)"
+        else:
+            logging.error(f"Unexpected prize: {prize}")
+            text += "Sorry, better luck next time. {Emojis.NOOT_LIKE_THIS}"
+        text += "\n\n"
+    return text
 
 
 def _Participate():
@@ -229,6 +281,7 @@ class MonthlyGiveawayCommand(Command):
                     CommandStatus.PERMISSION_DENIED,
                     f"I'm sorry {message.author.mention}, I'm afraid I can't do that.\n\n(You are not authorized to use that flag.)"
                 )
+            # Print all possible rejection responses.
             full_response = "All possible responses:"
             for i in range(1, _NUM_ALREADY_PARTICIPATED_RESPONSES + 1):
                 response = _GetAlreadyParticipatedResponse(message.author,
@@ -242,15 +295,51 @@ class MonthlyGiveawayCommand(Command):
                     CommandStatus.PERMISSION_DENIED,
                     f"I'm sorry {message.author.mention}, I'm afraid I can't do that.\n\n(You are not authorized to use that flag.)"
                 )
+            # Print the current prize table with weights.
             return CommandResult(CommandStatus.OK,
                                  f"\n```\n{str(_PRIZE_TABLE)}\n```")
+        elif "--print_prizes" in argv:
+            if not discord_util.IsAdmin(message.author):
+                return CommandResult(
+                    CommandStatus.PERMISSION_DENIED,
+                    f"I'm sorry {message.author.mention}, I'm afraid I can't do that.\n\n(You are not authorized to use that flag.)"
+                )
+            # Print the descriptions of every prize.
+            prizes = [
+                Prize.NO_PRIZE, Prize.GOODYBAG, Prize.GP_2M, Prize.GP_5M,
+                Prize.GP_10M, Prize.CUSTOM_RANK, Prize.CUSTOM_RANK_PLUSPLUS
+            ]
+            return CommandResult(CommandStatus.OK,
+                                 _GetPrizeDescriptions(prizes))
+        elif "--print_no_prizes" in argv:
+            if not discord_util.IsAdmin(message.author):
+                return CommandResult(
+                    CommandStatus.PERMISSION_DENIED,
+                    f"I'm sorry {message.author.mention}, I'm afraid I can't do that.\n\n(You are not authorized to use that flag.)"
+                )
+            # Print the response if user gets exactly 0 prizes.
+            prizes = [
+                Prize.NO_PRIZE, Prize.NO_PRIZE, Prize.NO_PRIZE, Prize.NO_PRIZE
+            ]
+            return CommandResult(CommandStatus.OK,
+                                 _GetPrizeDescriptions(prizes))
 
         # If users want to post good luck messages, that's fine. But catch any
         # flags in case it's me making a typo testing something.
+        force = False
         for arg in argv[1:]:
-            if arg.startswith("-"):
+            if arg == "--force":
+                if not discord_util.IsAdmin(message.author):
+                    return CommandResult(
+                        CommandStatus.PERMISSION_DENIED,
+                        f"I'm sorry {message.author.mention}, I'm afraid I can't do that.\n\n(You are not authorized to use that flag.)"
+                    )
+                force = True
+            elif arg.startswith("--"):
                 return CommandResult(CommandStatus.INVALID_ARGUMENT,
                                      f"Unrecognized flag: {arg}")
+            else:
+                pass
 
         # Main flow: participate in giveaway.
 
@@ -265,28 +354,7 @@ class MonthlyGiveawayCommand(Command):
 
         today_str = _DateFromMicros(timestamp_micros).strftime("%B %Y")
         result_message = f"{message.author.mention} is participating in the giveaway for {today_str}!\n\n"
-        for i in range(len(prizes)):
-            prize = prizes[i]
-            result_message += f"**Roll #{i + 1}**: "
-            if prize == Prize.NO_PRIZE:
-                result_message += "Sorry, better luck next time."
-            elif prize == Prize.GOODYBAG:
-                result_message += "Congratulations, you win a goodybag draw :penguin_dance:\n\n(Please DM a mod to claim.)"
-            elif prize == Prize.GP_2M:
-                result_message += "Congratulations, you win 2M gold :tada:\n\n(Please DM a mod to claim.)"
-            elif prize == Prize.GP_5M:
-                result_message += "Congratulations, you win 5M gold :dogdance: (Please DM a mod to claim.)"
-            elif prize == Prize.GP_10M:
-                result_message += "Congratulations, you win 10M gold :spoon: :spoon: :spoon:\n\n(Please DM a mod to claim.)"
-            elif prize == Prize.CUSTOM_RANK:
-                result_message += "Congratulations, you win a custom rank for a week!\n\n(Please DM a deputy owner+ to claim.)"
-            elif prize == Prize.CUSTOM_RANK_PLUSPLUS:
-                result_message += f"Congratulations, you win a super-special custom rank for a week! It's just like the normal custom rank, but you may also choose who receives it {_EVIL_KERMIT}\n\n(Note: the recipient is allowed to opt-out, and you can choose yourself. Please DM a deputy owner+ to claim.)"
-            else:
-                logging.error(f"Unexpected prize: {prize}")
-                result_message += "Sorry, better luck next time!"
-
-            result_message += "\n\n"
+        result_message += _GetPrizeDescriptions(prizes)
 
         _RecordGiveawayOutcome(message.author, timestamp_micros, prizes)
         return CommandResult(CommandStatus.OK, result_message)

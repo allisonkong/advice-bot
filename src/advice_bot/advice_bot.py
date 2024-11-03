@@ -21,9 +21,12 @@ _COMMAND_ALIASES = {
     "help": params_pb2.Command.HELP_COMMAND,
     "roll": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
     "participate": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
+    "giveaway": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
 }
 _COMMAND_REGISTRY = None
 _MAX_MESSAGE_LENGTH = 255
+
+_ENV_FLAG_REGEX = re.compile(r"--env=(\w+)")
 
 
 def _InitializeRegistry():
@@ -108,7 +111,7 @@ class HelpCommand(Command):
             show_help_msg = True
         if _IsCommandEnabled(params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
                              message):
-            help_msg += "\n* `!roll` or `!participate`: Participate in the monthly giveaway. See pin for details: https://discord.com/channels/480809905138171924/1302165779336396860/1302165889931546644."
+            help_msg += "\n* `!roll`, `!participate`, or `!giveaway`: Participate in the monthly giveaway. See pin for details: https://discord.com/channels/480809905138171924/1302165779336396860/1302165889931546644."
             show_help_msg = True
 
         if not show_help_msg:
@@ -201,6 +204,19 @@ class AdviceBot(discord.Client):
             await self.SendResponse(
                 message, "Message rejected: too long (max 255 chars)")
             return
+
+        # If --env=<env> is passed, only instances for that env should respond.
+        for arg in argv:
+            match = _ENV_FLAG_REGEX.fullmatch(arg)
+            if match is None:
+                continue
+            requested_env = match.group(1)
+            if FLAGS.env != requested_env:
+                logging.info("IGNORING message {message.id}: wrong env")
+                return
+            argv.remove(arg)
+            # Must stop iteration.
+            break
 
         result: CommandResult = _COMMAND_REGISTRY[command_enum].Execute(
             message, timestamp_micros, argv)
