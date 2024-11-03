@@ -244,9 +244,13 @@ class MonthlyGiveawayCommand(Command):
                 )
             return CommandResult(CommandStatus.OK,
                                  f"\n```\n{str(_PRIZE_TABLE)}\n```")
-        elif len(argv) > 1:
-            return CommandResult(CommandStatus.INVALID_ARGUMENT,
-                                 "Unrecognized flag(s): " + " ".join(argv[1:]))
+
+        # If users want to post good luck messages, that's fine. But catch any
+        # flags in case it's me making a typo testing something.
+        for arg in argv[1:]:
+            if arg.startswith("-"):
+                return CommandResult(CommandStatus.INVALID_ARGUMENT,
+                                     f"Unrecognized flag: {arg}")
 
         # Main flow: participate in giveaway.
 
