@@ -22,6 +22,7 @@ _COMMAND_ALIASES = {
     "roll": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
     "participate": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
     "giveaway": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
+    "gimmegimmegimme": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
 }
 _COMMAND_REGISTRY = None
 _MAX_MESSAGE_LENGTH = 255
