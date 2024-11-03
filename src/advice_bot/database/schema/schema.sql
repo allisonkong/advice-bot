@@ -4,7 +4,7 @@ CREATE TABLE discord_users (
   discord_username VARCHAR(255) NOT NULL,
 
   PRIMARY KEY (discord_user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE command_log (
   message_id BIGINT NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE command_log (
   PRIMARY KEY (message_id),
   FOREIGN KEY (discord_user_id)
     REFERENCES discord_users (discord_user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE monthly_giveaway_rolls (
   discord_user_id BIGINT NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE monthly_giveaway_rolls (
   PRIMARY KEY (discord_user_id, timestamp_micros, sequence_index),
   FOREIGN KEY (discord_user_id)
     REFERENCES discord_users (discord_user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE OR REPLACE VIEW monthly_giveaway
 AS
