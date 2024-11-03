@@ -241,8 +241,8 @@ def _GetPrizeDescriptions(prizes: list[Prize]):
             text += f"Sorry, better luck next time."
             if i == len(prizes) - 1 and num_prizes == 0:
                 text += " " + random.choice([
-                    Emojis.NOOT_LIKE_THIS, Emojis.ANGRY_SNOOT,
-                    Emojis.NOT_LIKE_DUCK
+                    Emojis.NOOT_LIKE_THIS,
+                    Emojis.NOT_LIKE_DUCK,
                 ])
         elif prize == Prize.GOODYBAG:
             text += f"Congratulations, you win a goodybag draw! {Emojis.PARTYING_FACE}\n\n(Please DM a mod to claim.)"
