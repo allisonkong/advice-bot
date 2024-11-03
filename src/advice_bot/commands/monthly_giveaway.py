@@ -1,3 +1,4 @@
+from absl import flags
 from absl import logging
 import datetime
 import discord
@@ -8,6 +9,8 @@ from advice_bot.commands.common import Command, CommandResult, CommandStatus
 from advice_bot.database import storage
 from advice_bot.util import discord_util
 from advice_bot.util.drop_table import DropTable
+
+FLAGS = flags.FLAGS
 
 
 class Prize(enum.IntEnum):
@@ -329,7 +332,8 @@ class MonthlyGiveawayCommand(Command):
         force = False
         for arg in argv[1:]:
             if arg == "--force":
-                if FLAGS.env == "prod" or not discord_util.IsAdmin(message.author):
+                if FLAGS.env == "prod" or not discord_util.IsAdmin(
+                        message.author):
                     return CommandResult(
                         CommandStatus.PERMISSION_DENIED,
                         f"I'm sorry {message.author.mention}, I'm afraid I can't do that.\n\n(You are not authorized to use that flag.)"
