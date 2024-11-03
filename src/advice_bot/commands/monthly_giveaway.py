@@ -152,7 +152,7 @@ def _DateFromMicros(timestamp_micros: int):
 
 def _IsEligible(discord_user: discord.Member | discord.abc.User,
                 timestamp_micros: int,
-                force=False) -> bool:
+                force: bool = False) -> bool:
     # For ease of testing.
     if force:
         return True
@@ -343,7 +343,7 @@ class MonthlyGiveawayCommand(Command):
 
         # Main flow: participate in giveaway.
 
-        if not _IsEligible(message.author, timestamp_micros, argv):
+        if not _IsEligible(message.author, timestamp_micros, force):
             return CommandResult(
                 CommandStatus.PERMISSION_DENIED,
                 _GetAlreadyParticipatedResponse(message.author,
