@@ -170,7 +170,7 @@ def _IsEligible(discord_user: discord.Member | discord.abc.User,
     return last_date < start_of_month
 
 
-_NUM_ALREADY_PARTICIPATED_RESPONSES = 11
+_NUM_ALREADY_PARTICIPATED_RESPONSES = 13
 
 
 def _GetAlreadyParticipatedResponse(discord_user: discord.Member |
@@ -214,17 +214,23 @@ def _GetAlreadyParticipatedResponse(discord_user: discord.Member |
         # LOTR
         return f"We've had one, yes. What about second dice roll?\n\n({suffix} {discord_user.mention})"
     elif choice == 8:
+        # LOTR
+        return f"Ha ha ha ha ha ha. You have no power here.\n\n({suffix} {discord_user.mention})"
+    elif choice == 9:
         # Star wars
         return f"How can you do this? This is outrageous! It's unfair!\n\n({suffix} {discord_user.mention})"
-    elif choice == 9:
+    elif choice == 10:
         # Mean girls
         return f"{discord_user.mention}, stop trying to make ~~fetch~~ second dice roll happen. It's not going to happen.\n\n({suffix})"
-    elif choice == 10:
+    elif choice == 11:
         # Princess Bride
         return f"Hello. My name is Inigo Montoya. You have already participated in this month's giveaway. Prepare to die.\n\n({discord_user.mention})"
-    elif choice == 11:
+    elif choice == 12:
         # Avatar the Last Airbender
         return f"It's time for you to look inward, and start asking yourself the big questions. Who are you? And have you already participated in the giveaway this month?\n\n(Yes, yes you have {discord_user.mention})"
+    elif choice == 13:
+        # Avatar the Last Airbender
+        return f"That's rough buddy.\n\n({suffix} {discord_user.mention})"
     else:
         # Should never happen.
         logging.error(
