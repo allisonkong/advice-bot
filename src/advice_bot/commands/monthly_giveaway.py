@@ -33,9 +33,9 @@ _PRIZE_TABLE = DropTable([
         (0.33, Prize.GOODYBAG),
         # GP prize
         (0.33, DropTable([
-             (0.60, Prize.GP_2M),
-             (0.30, Prize.GP_5M),
-             (0.10, Prize.GP_10M),
+             (0.80, Prize.GP_2M),
+             (0.18, Prize.GP_5M),
+             (0.02, Prize.GP_10M),
          ])),
         # Custom rank
         (0.34, DropTable([
