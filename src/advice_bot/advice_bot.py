@@ -144,7 +144,7 @@ class AdviceBot(discord.Client):
         if match is None:
             return
 
-        command = match.group(1)
+        command = match.group(1).lower()
         argv: list[str] = shlex.split(message.content)
         await self.ProcessCommand(command, message, timestamp_micros, argv)
 
