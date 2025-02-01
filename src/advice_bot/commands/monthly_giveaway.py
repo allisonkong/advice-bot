@@ -66,6 +66,8 @@ class Emojis(enum.StrEnum):
     PENGUIN_DANCE = "<a:penguin_dance:760257825737408573>"
     KANKAN = "<a:KanKan:755671122451890237>"
     CRAB_RAVE = "<a:crab_rave:628404069718949892>"
+    BLUE_LIGHT = "<a:blue_light:760254835202850839>"
+    RED_LIGHT = "<a:red_light:760254836016676894>"
 
 
 _LAST_PARTICIPATION_CACHE = {}
@@ -368,3 +370,43 @@ class MonthlyGiveawayCommand(Command):
 
         _RecordGiveawayOutcome(message.author, timestamp_micros, prizes)
         return CommandResult(CommandStatus.OK, result_message)
+
+
+def IsMod(user: discord.Member):
+    if discord_util.IsAdmin(user):
+        return True
+    for role in user.roles:
+        if role.name.lower() in [
+                "mod team", "mod +", "moderator", "officer", "commander",
+                "brigadier", "deputy owner", "leader"
+        ]:
+            return True
+    return False
+
+
+def FunnyModResponse(message: discord.Message):
+    """Returns a funny message if a mod tries to do something silly with the giveaway.
+    """
+    if not IsMod(message.author):
+        return f"Hello. My name is Inigo Montoya. You are not authorized to use that command. Prepare to die.\n\n({message.author.mention})"
+
+    NO_POWER = f"Ha ha ha ha ha ha. You have no power here {message.author.mention}."
+    MOD_ABUSE = f"{Emojis.BLUE_LIGHT} {Emojis.RED_LIGHT} MOD ABUSE MOD ABUSE {Emojis.BLUE_LIGHT} {Emojis.RED_LIGHT}\n\n({message.author.mention})"
+    OVERFLOW = f"""Sure, why not. You're such a good mod, you can have a free roll.
+
+**Roll #1**: Congratulations, you win 1,000,000,000 gold. Incredible!
+
+**Roll #2**: Congratulations, you win 1,000,000,000 gold. Wow!
+
+**Roll #3**: Congratulations, you win 147,483,647 gold. Amazing!
+
+**Roll #4** Congratulations, you win 1 gold. Outstanding!
+
+Total winnings: -2,147,483,648 gold. Please report to the Corrupted Gauntlet immediately to repay your debt {message.author.mention}."""
+
+    response_table = DropTable([
+        (0.6, NO_POWER),
+        (0.2, MOD_ABUSE),
+        (0.2, OVERFLOW),
+    ])
+    return response_table.Roll()

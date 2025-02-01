@@ -120,6 +120,23 @@ class HelpCommand(Command):
         return help_msg
 
 
+def MaybeHandleEasterEgg(message: discord.Message):
+    content = message.content.lower()
+    if content.startswith("!make me a sandwich"):
+        return "What? Make it yourself."
+    elif content.startswith("!sudo make me a sandwich"):
+        return "Okay."
+    elif content == "!sudo" or content.startswith("!sudo "):
+        return f"{message.author.mention} is not in the sudoers file. This incident will be reported."
+    elif ("roll" in content or "participate" in content or
+          "giveaway" in content or "gimmegimmegimme" in content) and (
+              "mod" in content or "special" in content or "admin" in content):
+        return monthly_giveaway.FunnyModResponse(message)
+    elif content == "!ban" or content.startswith("!ban "):
+        return f"Instructions unclear. {message.author.mention} is now banned."
+    return None
+
+
 class AdviceBot(discord.Client):
 
     @classmethod
@@ -174,30 +191,30 @@ class AdviceBot(discord.Client):
             f"\ncontent: {message.content}")
 
         is_watched_channel = _IsChannelWatched(message)
+        if not is_watched_channel:
+            logging.info("IGNORING message {message.id}: unexpected channel.")
+            return
 
         if command not in _COMMAND_ALIASES:
-            if is_watched_channel:
+            easter_egg = MaybeHandleEasterEgg(message)
+            if easter_egg is not None:
+                logging.info(f"PROCESSED message {message.id} as easter egg.")
+                await self.SendResponse(message, easter_egg)
+            else:
                 logging.info(
                     f"REJECTING message {message.id}: unrecognized command")
                 await self.SendResponse(
                     message,
                     f"Unrecognized command: {_COMMAND_PREFIX}{command}")
-            else:
-                logging.info(
-                    f"IGNORING message {message.id}: unrecognized command")
             return
 
         command_enum = _COMMAND_ALIASES[command]
 
         if not _IsCommandEnabled(command_enum, message):
-            if is_watched_channel:
-                logging.info(f"REJECTING message {message.id}: not enabled")
-                await self.SendResponse(
-                    message,
-                    f"You cannot use {_COMMAND_PREFIX}{command} in this channel."
-                )
-            else:
-                logging.info(f"IGNORING message {message.id}: not enabled")
+            logging.info(f"REJECTING message {message.id}: not enabled")
+            await self.SendResponse(
+                message,
+                f"You cannot use {_COMMAND_PREFIX}{command} in this channel.")
             return
 
         if len(message.content) > _MAX_MESSAGE_LENGTH:
