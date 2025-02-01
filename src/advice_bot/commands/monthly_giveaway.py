@@ -405,8 +405,8 @@ def FunnyModResponse(message: discord.Message):
 Total winnings: -2,147,483,648 gold. Please report to the Corrupted Gauntlet immediately to repay your debt {message.author.mention}."""
 
     response_table = DropTable([
-        (0.6, NO_POWER),
-        (0.2, MOD_ABUSE),
-        (0.2, OVERFLOW),
+        (0.5, NO_POWER),
+        (0.25, MOD_ABUSE),
+        (0.25, OVERFLOW),
     ])
     return response_table.Roll()
