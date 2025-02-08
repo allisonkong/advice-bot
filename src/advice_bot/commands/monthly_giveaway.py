@@ -400,7 +400,7 @@ def FunnyModResponse(message: discord.Message):
 
 **Roll #3**: Congratulations, you win 147,483,647 gold. Amazing!
 
-**Roll #4** Congratulations, you win 1 gold. Outstanding!
+**Roll #4**: Congratulations, you win 1 gold. Outstanding!
 
 Total winnings: -2,147,483,648 gold. Please report to the Corrupted Gauntlet immediately to repay your debt {message.author.mention}."""
 
