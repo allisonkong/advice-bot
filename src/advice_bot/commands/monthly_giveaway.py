@@ -388,7 +388,7 @@ def FunnyModResponse(message: discord.Message):
     """Returns a funny message if a mod tries to do something silly with the giveaway.
     """
     if not IsMod(message.author):
-        return f"Hello. My name is Inigo Montoya. You are not authorized to use that command. Prepare to die.\n\n({message.author.mention})"
+        return f"I'm sorry {message.author.mention}, I'm afraid I can't do that.\n\n(You are not authorized to use that command.)"
 
     NO_POWER = f"Ha ha ha ha ha ha. You have no power here {message.author.mention}."
     MOD_ABUSE = f"{Emojis.BLUE_LIGHT} {Emojis.RED_LIGHT} MOD ABUSE MOD ABUSE {Emojis.BLUE_LIGHT} {Emojis.RED_LIGHT}\n\n({message.author.mention})"
