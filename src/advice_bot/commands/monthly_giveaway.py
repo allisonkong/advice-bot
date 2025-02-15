@@ -402,10 +402,23 @@ def FunnyModResponse(message: discord.Message):
 Total winnings: -2,147,483,648 gold. Please report to the Corrupted Gauntlet immediately to repay your debt {message.author.mention}."""
     SEGFAULT = "Segmentation fault (core dumped)"
 
+    # Monty Python
+    FART = f"I fart in your general direction {message.author.mention}."
+    HAMSTER = f"Your mother was a hamster and your father smelt of elderberries {message.author.mention}."
+    SWORD = f"You can't expect to wield supreme executive power just because some watery tart threw a sword at you {message.author.mention}."
+    REPRESSED = f"Help! Help! I'm being repressed! ({message.author.mention})"
+
     response_table = DropTable([
-        (0.25, NO_POWER),
-        (0.25, MOD_ABUSE),
-        (0.25, OVERFLOW),
-        (0.25, SEGFAULT),
+        (0.20, NO_POWER),
+        (0.20, MOD_ABUSE),
+        (0.20, OVERFLOW),
+        (0.20, SEGFAULT),
+        (0.20,
+         DropTable([
+             (0.25, FART),
+             (0.25, HAMSTER),
+             (0.25, SWORD),
+             (0.25, REPRESSED),
+         ])),
     ])
     return response_table.Roll()
