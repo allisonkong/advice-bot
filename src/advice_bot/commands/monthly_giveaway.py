@@ -264,12 +264,12 @@ def _GetPrizeDescriptions(prizes: list[Prize]):
         elif prize == Prize.GP_10M:
             text += f"Congratulations, you win 10M gold. Incredible! {Emojis.CRAB_RAVE}\n\n(Please DM a mod to claim.)"
         elif prize == Prize.CUSTOM_RANK:
-            text += f"Congratulations, you win a custom rank for a week :sunglasses:\n\n(Please DM a deputy owner+ to claim.)"
+            text += f"Congratulations, you win a custom rank for a week :sunglasses:\n\n(Please DM a gold star+ to claim.)"
         elif prize == Prize.CUSTOM_RANK_PLUSPLUS:
-            text += f"Congratulations, you win a super-special custom rank for a week! It's just like the normal custom rank, but you also get to choose who receives it {Emojis.EVIL_KERMIT}\n\n(Note: the recipient may opt-out, and you may choose yourself if you wish. Please DM a deputy owner+ to claim.)"
+            text += f"Congratulations, you win a super-special custom rank for a week! It's just like the normal custom rank, but you also get to choose who receives it {Emojis.EVIL_KERMIT}\n\n(Note: the recipient may opt-out, and you may choose yourself if you wish. Please DM a gold star+ to claim.)"
         else:
             logging.error(f"Unexpected prize: {prize}")
-            text += "Sorry, better luck next time. {Emojis.NOOT_LIKE_THIS}"
+            text += "Sorry, better luck next time."
         text += "\n\n"
     return text
 
@@ -376,10 +376,7 @@ def IsMod(user: discord.Member):
     if discord_util.IsAdmin(user):
         return True
     for role in user.roles:
-        if role.name.lower() in [
-                "mod team", "mod +", "moderator", "officer", "commander",
-                "brigadier", "deputy owner", "leader"
-        ]:
+        if role.name.lower() in ["mod team", "mod +", "moderator"]:
             return True
     return False
 
@@ -403,10 +400,12 @@ def FunnyModResponse(message: discord.Message):
 **Roll #4**: Congratulations, you win 1 gold. Outstanding!
 
 Total winnings: -2,147,483,648 gold. Please report to the Corrupted Gauntlet immediately to repay your debt {message.author.mention}."""
+    SEGFAULT = "Segmentation fault (core dumped)"
 
     response_table = DropTable([
-        (0.5, NO_POWER),
+        (0.25, NO_POWER),
         (0.25, MOD_ABUSE),
         (0.25, OVERFLOW),
+        (0.25, SEGFAULT),
     ])
     return response_table.Roll()
