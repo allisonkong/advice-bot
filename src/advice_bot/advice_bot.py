@@ -23,6 +23,7 @@ _COMMAND_ALIASES = {
     "participate": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
     "giveaway": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
     "gimmegimmegimme": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
+    "gimme": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
 }
 _COMMAND_REGISTRY = None
 _MAX_MESSAGE_LENGTH = 255
@@ -121,6 +122,16 @@ class HelpCommand(Command):
 
 
 def MaybeHandleEasterEgg(message: discord.Message):
+
+    def _SpecialModRoll(message):
+        return all([
+            ("roll" in content or "participate" in content or
+             "giveaway" in content or "gimmegimmegimme" in content) and
+            ("mod" in content or "special" in content or "admin" in content) and
+            (_IsCommandEnabled(params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
+                               message))
+        ])
+
     content = message.content.lower()
     if content.startswith("!make me a sandwich"):
         return "What? Make it yourself."
@@ -128,9 +139,7 @@ def MaybeHandleEasterEgg(message: discord.Message):
         return "Okay."
     elif content == "!sudo" or content.startswith("!sudo "):
         return f"{message.author.mention} is not in the sudoers file. This incident will be reported."
-    elif ("roll" in content or "participate" in content or
-          "giveaway" in content or "gimmegimmegimme" in content) and (
-              "mod" in content or "special" in content or "admin" in content):
+    elif _SpecialModRoll(message):
         return monthly_giveaway.FunnyModResponse(message)
     elif content == "!ban" or content.startswith("!ban "):
         return f"Instructions unclear. {message.author.mention} is now banned."
@@ -190,22 +199,22 @@ class AdviceBot(discord.Client):
             f"\nchannel: {message.channel.name} ({message.channel.id})" +
             f"\ncontent: {message.content}")
 
+        easter_egg = MaybeHandleEasterEgg(message)
+        if easter_egg is not None:
+            logging.info(f"PROCESSED message {message.id} as easter egg.")
+            await self.SendResponse(message, easter_egg)
+            return
+
         is_watched_channel = _IsChannelWatched(message)
         if not is_watched_channel:
             logging.info("IGNORING message {message.id}: unexpected channel.")
             return
 
         if command not in _COMMAND_ALIASES:
-            easter_egg = MaybeHandleEasterEgg(message)
-            if easter_egg is not None:
-                logging.info(f"PROCESSED message {message.id} as easter egg.")
-                await self.SendResponse(message, easter_egg)
-            else:
-                logging.info(
-                    f"REJECTING message {message.id}: unrecognized command")
-                await self.SendResponse(
-                    message,
-                    f"Unrecognized command: {_COMMAND_PREFIX}{command}")
+            logging.info(
+                f"REJECTING message {message.id}: unrecognized command")
+            await self.SendResponse(
+                message, f"Unrecognized command: {_COMMAND_PREFIX}{command}")
             return
 
         command_enum = _COMMAND_ALIASES[command]
