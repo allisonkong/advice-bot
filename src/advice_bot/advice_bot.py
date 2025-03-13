@@ -7,7 +7,7 @@ import shlex
 import time
 
 from advice_bot.commands.common import Command, CommandResult, CommandStatus
-from advice_bot.commands import admin, monthly_giveaway
+from advice_bot.commands import admin, diceroll, monthly_giveaway
 from advice_bot import params
 from advice_bot.proto import params_pb2
 from advice_bot.util import discord_util
@@ -24,11 +24,11 @@ _COMMAND_ALIASES = {
     "giveaway": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
     "gimmegimmegimme": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
     "gimme": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
+    "diceroll": params_pb2.Command.DICEROLL_COMMAND,
 }
-_COMMAND_REGISTRY = None
 _MAX_MESSAGE_LENGTH = 255
-
 _ENV_FLAG_REGEX = re.compile(r"--env=(\w+)")
+_COMMAND_REGISTRY = None
 
 
 def _InitializeRegistry():
@@ -40,6 +40,8 @@ def _InitializeRegistry():
             HelpCommand(),
         params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND:
             monthly_giveaway.MonthlyGiveawayCommand(),
+        params_pb2.Command.DICEROLL_COMMAND:
+            diceroll.DiceRollCommand(),
     }
 
 
@@ -218,6 +220,10 @@ class AdviceBot(discord.Client):
             return
 
         command_enum = _COMMAND_ALIASES[command]
+        # Dirty hack (since they use the same name) that we'll probably never clean up, oh well.
+        if command == "roll" and _IsCommandEnabled(
+                params_pb2.Command.DICEROLL_COMMAND, message):
+            command_enum = params_pb2.Command.DICEROLL_COMMAND
 
         if not _IsCommandEnabled(command_enum, message):
             logging.info(f"REJECTING message {message.id}: not enabled")
