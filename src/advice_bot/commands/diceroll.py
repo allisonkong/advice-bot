@@ -31,7 +31,7 @@ class DiceRollCommand(Command):
             return _USAGE
 
         if roll_min > roll_max:
-            return "You've gotta ask yourself one question: \"Do I feel lucky?\". Well do ya, punk?"
+            return "You've gotta ask yourself one question: \"Do I feel lucky?\"\n\nWell do ya, punk?"
 
         roll = random.SystemRandom().randint(roll_min, roll_max)
         return f"{message.author.mention} is rolling between {roll_min} and {roll_max} and gets: **{roll}**"
