@@ -6,7 +6,7 @@ from advice_bot.commands.common import Command, CommandResult, CommandStatus
 from advice_bot.proto import params_pb2
 
 _BOUNDS_RE = re.compile("(\d+)-(\d+)")
-_USAGE = "Invalid arguments. Please use `!roll` or `!diceroll`. If you want to roll with custom values, use `!roll MIN-MAX`."
+_USAGE = "Usage: `!roll` or `!roll MIN-MAX`."
 
 
 class DiceRollCommand(Command):
