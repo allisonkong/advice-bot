@@ -84,4 +84,4 @@ class DiceRollCommand(Command):
 
         roll = random.SystemRandom().randint(1, 20)
         chosen_task = TASKS[roll]
-        return f"{message.author.mention} rolls {article[roll]} **{roll}**. Your task is: {chosen_task}.\n\nSee [spreadsheet](https://docs.google.com/spreadsheets/d/1CQEidoPPE3YnQxOCR48zM2wW0zaaeA7bqdnbc0xw3lA/edit?gid=1727437871#gid=1727437871) for detailed task and screenshot requirements."
+        return f"{message.author.mention} rolls {article[roll]} **{roll}**. Your task is: {chosen_task}.\n\nPlease check the [spreadsheet](https://docs.google.com/spreadsheets/d/1CQEidoPPE3YnQxOCR48zM2wW0zaaeA7bqdnbc0xw3lA/edit?gid=1727437871#gid=1727437871) for detailed task and screenshot requirements."
