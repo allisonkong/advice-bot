@@ -25,7 +25,7 @@ class Prize(enum.IntEnum):
 
 
 # yapf: disable
-_PRIZE_TABLE = DropTable([
+_PRIZE_TABLE_2024_11 = DropTable([
     (0.95, Prize.NO_PRIZE),
     # Prize sub-table
     (0.05, DropTable([
@@ -44,6 +44,33 @@ _PRIZE_TABLE = DropTable([
          ])),
     ])),
 ])
+
+_PRIZE_TABLE_2025_08 = DropTable([
+    (0.95, Prize.NO_PRIZE),
+    # Prize sub-table
+    (0.05, DropTable([
+        # Goodybag
+        (0.33, Prize.GOODYBAG),
+        # GP prize
+        (0.33, DropTable([
+             (0.80, Prize.GP_2M),
+             (0.18, Prize.GP_5M),
+             (0.02, Prize.GP_10M),
+         ])),
+        # Custom rank
+        (0.34, DropTable([
+             (0.90, Prize.CUSTOM_RANK),
+             (0.10, Prize.CUSTOM_RANK_PLUSPLUS),
+         ])),
+    ])),
+])
+
+def _GetPrizeTable(timestamp_micros: int):
+    today = _DateFromMicros(timestamp_micros)
+    if today >= datetime.date(2025, 8, 1):
+        return _PRIZE_TABLE_2025_08
+    return _PRIZE_TABLE_2024_11
+
 # yapf: enable
 
 _ROLLS = 4
@@ -274,10 +301,10 @@ def _GetPrizeDescriptions(prizes: list[Prize]):
     return text
 
 
-def _Participate():
+def _Participate(timestamp_micros: int):
     prizes = []
     for i in range(_ROLLS):
-        prizes.append(_PRIZE_TABLE.Roll())
+        prizes.append(_GetPrizeTable(timestamp_micros).Roll())
     return prizes
 
 
@@ -307,8 +334,9 @@ class MonthlyGiveawayCommand(Command):
                     f"I'm sorry {message.author.mention}, I'm afraid I can't do that.\n\n(You are not authorized to use that flag.)"
                 )
             # Print the current prize table with weights.
-            return CommandResult(CommandStatus.OK,
-                                 f"\n```\n{str(_PRIZE_TABLE)}\n```")
+            return CommandResult(
+                CommandStatus.OK,
+                f"\n```\n{str(_GetPrizeTable(timestamp_micros))}\n```")
         elif "--print_prizes" in argv:
             if not discord_util.IsAdmin(message.author):
                 return CommandResult(
@@ -361,7 +389,7 @@ class MonthlyGiveawayCommand(Command):
                 _GetAlreadyParticipatedResponse(message.author,
                                                 timestamp_micros))
 
-        prizes = _Participate()
+        prizes = _Participate(timestamp_micros)
         logging.info(prizes)
 
         today_str = _DateFromMicros(timestamp_micros).strftime("%B %Y")
