@@ -46,24 +46,26 @@ _PRIZE_TABLE_2024_11 = DropTable([
 ])
 
 _PRIZE_TABLE_2025_08 = DropTable([
-    (0.95, Prize.NO_PRIZE),
+    (0.90, Prize.NO_PRIZE),
     # Prize sub-table
-    (0.05, DropTable([
+    (0.10, DropTable([
         # Goodybag
         (0.33, Prize.GOODYBAG),
         # GP prize
         (0.33, DropTable([
-             (0.80, Prize.GP_2M),
-             (0.18, Prize.GP_5M),
-             (0.02, Prize.GP_10M),
+             (0.70, Prize.GP_2M),
+             (0.20, Prize.GP_5M),
+             (0.10, Prize.GP_10M),
          ])),
         # Custom rank
         (0.34, DropTable([
-             (0.90, Prize.CUSTOM_RANK),
-             (0.10, Prize.CUSTOM_RANK_PLUSPLUS),
+             (0.70, Prize.CUSTOM_RANK),
+             (0.30, Prize.CUSTOM_RANK_PLUSPLUS),
          ])),
     ])),
 ])
+# yapf: enable
+
 
 def _GetPrizeTable(timestamp_micros: int):
     today = _DateFromMicros(timestamp_micros)
@@ -71,7 +73,6 @@ def _GetPrizeTable(timestamp_micros: int):
         return _PRIZE_TABLE_2025_08
     return _PRIZE_TABLE_2024_11
 
-# yapf: enable
 
 _ROLLS = 4
 
