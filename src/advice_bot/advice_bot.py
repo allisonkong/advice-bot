@@ -214,7 +214,7 @@ def MaybeHandleEasterEgg(message: discord.Message):
     elif content == "!ban" or content.startswith("!ban "):
         return f"Instructions unclear. {message.author.mention} is now banned."
     elif content == "!reroll":
-        return f"Including results for !rickroll. Search only for `!reroll`?\n\n{_RickRoll()}"
+        return f"Including results for `!rickroll`. Search only for `!reroll`?\n\n{_RickRoll()}"
     elif content.startswith("!reroll "):
         return f"Haha no."
     elif content.startswith("!rickroll"):
