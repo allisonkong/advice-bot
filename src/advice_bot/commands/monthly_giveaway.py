@@ -383,6 +383,11 @@ class MonthlyGiveawayCommand(Command):
                 pass
 
         # Main flow: participate in giveaway.
+        if FLAGS.env == "prod" and not (
+                message.guild.id == 480809905138171924 and
+                message.channel.id == 1302165779336396860):
+            return CommandResult(CommandStatus.PERMISSION_DENIED,
+                                 "Nothing interesting happens.")
 
         if not _IsEligible(message.author, timestamp_micros, force):
             return CommandResult(
