@@ -123,6 +123,58 @@ class HelpCommand(Command):
         return help_msg
 
 
+_g_last_rickroll_time = None
+_g_rickroll_state = 0
+_RICKROLL_LINES = [
+    "We're no strangers to love",
+    "You know the rules and so do I",
+    "A full commitment's what I'm thinkin' of",
+    "You wouldn't get this from any other guy",
+    "I just wanna tell you how I'm feeling",
+    "Gotta make you understand",
+    "Never gonna give you up, never gonna let you down",
+    "Never gonna run around and desert you",
+    "Never gonna make you cry, never gonna say goodbye",
+    "Never gonna tell a lie and hurt you",
+    "We've known each other for so long",
+    "Your heart's been aching, but you're too shy to say it",
+    "Inside, we both know what's been going on",
+    "We know the game and we're gonna play it",
+    "And if you ask me how I'm feeling",
+    "Don't tell me you're too blind to see",
+    "Never gonna give you up, never gonna let you down",
+    "Never gonna run around and desert you",
+    "Never gonna make you cry, never gonna say goodbye",
+    "Never gonna tell a lie and hurt you",
+    "Never gonna give you up, never gonna let you down",
+    "Never gonna run around and desert you",
+    "Never gonna make you cry, never gonna say goodbye",
+    "Never gonna tell a lie and hurt you",
+    "(Ooh, give you up)",
+    "(Ooh, give you up)",
+    "(Ooh) never gonna give, never gonna give (give you up)",
+    "(Ooh) never gonna give, never gonna give (give you up)",
+    "We've known each other for so long",
+    "Your heart's been aching, but you're too shy to say it",
+    "Inside, we both know what's been going on",
+    "We know the game and we're gonna play it",
+    "I just wanna tell you how I'm feeling",
+    "Gotta make you understand",
+    "Never gonna give you up, never gonna let you down",
+    "Never gonna run around and desert you",
+    "Never gonna make you cry, never gonna say goodbye",
+    "Never gonna tell a lie and hurt you",
+    "Never gonna give you up, never gonna let you down",
+    "Never gonna run around and desert you",
+    "Never gonna make you cry, never gonna say goodbye",
+    "Never gonna tell a lie and hurt you",
+    "Never gonna give you up, never gonna let you down",
+    "Never gonna run around and desert you",
+    "Never gonna make you cry, never gonna say goodbye",
+    "Never gonna tell a lie and hurt you",
+]
+
+
 def MaybeHandleEasterEgg(message: discord.Message):
 
     def _SpecialModRoll(message):
@@ -133,6 +185,22 @@ def MaybeHandleEasterEgg(message: discord.Message):
             (_IsCommandEnabled(params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
                                message))
         ])
+
+    def _RickRoll():
+        global _g_last_rickroll_time
+        global _g_rickroll_state
+
+        if not 0 <= _g_rickroll_state < len(_RICKROLL_LINES):
+            _g_rickroll_state = 0
+
+        # Reset state if >1hr since last interaction.
+        now = time.time()
+        if _g_last_rickroll_time is None or now - _g_last_rickroll_time > 3600:
+            _g_rickroll_state = 0
+            _g_last_rickroll_time = now
+        line = _RICKROLL_LINES[_g_rickroll_state]
+        _g_rickroll_state += 1
+        return f"🎵 {line} 🎵"
 
     content = message.content.lower()
     if content.startswith("!make me a sandwich"):
@@ -145,6 +213,12 @@ def MaybeHandleEasterEgg(message: discord.Message):
         return monthly_giveaway.FunnyModResponse(message)
     elif content == "!ban" or content.startswith("!ban "):
         return f"Instructions unclear. {message.author.mention} is now banned."
+    elif content == "!reroll":
+        return f"Including results for !rickroll. Search only for `!reroll`?\n\n{_RickRoll()}"
+    elif content.startswith("!reroll "):
+        return f"Haha no."
+    elif content.startswith("!rickroll"):
+        return _RickRoll()
     return None
 
 
