@@ -93,7 +93,7 @@ class Emojis(enum.StrEnum):
     DOG_DANCE = "<a:dogdance:628401377508458516>"
     PENGUIN_DANCE = "<a:penguin_dance:760257825737408573>"
     KANKAN = "<a:KanKan:755671122451890237>"
-    CRAB_RAVE = "<a:crab_rave:628404069718949892>"
+    CRAB_RAVE = "<a:crab_rave:1400718860633641132>"
     BLUE_LIGHT = "<a:blue_light:760254835202850839>"
     RED_LIGHT = "<a:red_light:760254836016676894>"
 
