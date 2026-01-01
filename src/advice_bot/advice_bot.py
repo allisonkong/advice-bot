@@ -24,6 +24,7 @@ _COMMAND_ALIASES = {
     "giveaway": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
     "gimmegimmegimme": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
     "gimme": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
+    "pleae": params_pb2.Command.MONTHLY_GIVEAWAY_COMMAND,
     "diceroll": params_pb2.Command.DICEROLL_COMMAND,
 }
 _MAX_MESSAGE_LENGTH = 255
