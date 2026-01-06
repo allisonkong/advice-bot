@@ -25,26 +25,6 @@ class Prize(enum.IntEnum):
 
 
 # yapf: disable
-_PRIZE_TABLE_2024_11 = DropTable([
-    (0.95, Prize.NO_PRIZE),
-    # Prize sub-table
-    (0.05, DropTable([
-        # Goodybag
-        (0.33, Prize.GOODYBAG),
-        # GP prize
-        (0.33, DropTable([
-             (0.80, Prize.GP_2M),
-             (0.18, Prize.GP_5M),
-             (0.02, Prize.GP_10M),
-         ])),
-        # Custom rank
-        (0.34, DropTable([
-             (0.90, Prize.CUSTOM_RANK),
-             (0.10, Prize.CUSTOM_RANK_PLUSPLUS),
-         ])),
-    ])),
-])
-
 _PRIZE_TABLE_2025_08 = DropTable([
     (0.90, Prize.NO_PRIZE),
     # Prize sub-table
@@ -64,14 +44,34 @@ _PRIZE_TABLE_2025_08 = DropTable([
          ])),
     ])),
 ])
+
+_PRIZE_TABLE_2026_02 = DropTable([
+    (0.90, Prize.NO_PRIZE),
+    # Prize sub-table
+    (0.10, DropTable([
+        # Goodybag
+        (0.20, Prize.GOODYBAG),
+        # GP prize
+        (0.40, DropTable([
+             (0.70, Prize.GP_2M),
+             (0.20, Prize.GP_5M),
+             (0.10, Prize.GP_10M),
+         ])),
+        # Custom rank
+        (0.40, DropTable([
+             (0.80, Prize.CUSTOM_RANK),
+             (0.20, Prize.CUSTOM_RANK_PLUSPLUS),
+         ])),
+    ])),
+])
 # yapf: enable
 
 
 def _GetPrizeTable(timestamp_micros: int):
     today = _DateFromMicros(timestamp_micros)
-    if today >= datetime.date(2025, 8, 1):
-        return _PRIZE_TABLE_2025_08
-    return _PRIZE_TABLE_2024_11
+    if today >= datetime.date(2026, 2, 1):
+        return _PRIZE_TABLE_2026_02
+    return _PRIZE_TABLE_2025_08
 
 
 _ROLLS = 4
@@ -284,17 +284,17 @@ def _GetPrizeDescriptions(prizes: list[Prize]):
                     Emojis.NOT_LIKE_DUCK,
                 ])
         elif prize == Prize.GOODYBAG:
-            text += f"Congratulations, you win a goodybag draw! {Emojis.PARTYING_FACE}\n\n(Please DM a mod to claim.)"
+            text += f"Congratulations, you win a goodybag draw! {Emojis.PARTYING_FACE}\n\n(Please DM a mod to claim within 30 days.)"
         elif prize == Prize.GP_2M:
-            text += f"Congratulations, you win 2M gold. Nice! {Emojis.TADA}\n\n(Please DM a mod to claim.)"
+            text += f"Congratulations, you win 2M gold. Nice! {Emojis.TADA}\n\n(Please DM a mod to claim within 30 days.)"
         elif prize == Prize.GP_5M:
-            text += f"Congratulations, you win 5M gold. Very nice! {Emojis.DOG_DANCE}\n\n(Please DM a mod to claim.)"
+            text += f"Congratulations, you win 5M gold. Very nice! {Emojis.DOG_DANCE}\n\n(Please DM a mod to claim within 30 days.)"
         elif prize == Prize.GP_10M:
-            text += f"Congratulations, you win 10M gold. Incredible! {Emojis.CRAB_RAVE}\n\n(Please DM a mod to claim.)"
+            text += f"Congratulations, you win 10M gold. Incredible! {Emojis.CRAB_RAVE}\n\n(Please DM a mod to claim within 30 days.)"
         elif prize == Prize.CUSTOM_RANK:
-            text += f"Congratulations, you win a custom rank for a week :sunglasses:\n\n(Please DM a gold star+ to claim.)"
+            text += f"Congratulations, you win a custom rank for a week :sunglasses:\n\n(Please DM a gold star+ to claim within 30 days.)"
         elif prize == Prize.CUSTOM_RANK_PLUSPLUS:
-            text += f"Congratulations, you win a super-special custom rank for a week! It's just like the normal custom rank, but you also get to choose who receives it {Emojis.EVIL_KERMIT}\n\n(Note: the recipient may opt-out, and you may choose yourself if you wish. Please DM a gold star+ to claim.)"
+            text += f"Congratulations, you win a super-special custom rank for a week! It's like the normal custom rank, but you also get to choose who receives it {Emojis.EVIL_KERMIT}\n\n(Note: the recipient may opt-out, and you may choose yourself if you wish. Please DM a gold star+ to claim within 30 days.)"
         else:
             logging.error(f"Unexpected prize: {prize}")
             text += "Sorry, better luck next time."
