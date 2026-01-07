@@ -1,3 +1,13 @@
+-- Participants per month
+SELECT
+  YEAR(FROM_UNIXTIME(timestamp_micros / 1e6)) AS year,
+  MONTH(FROM_UNIXTIME(timestamp_micros / 1e6)) AS month,
+  COUNT(DISTINCT discord_user_id) AS num_participants
+FROM monthly_giveaway_rolls
+GROUP BY year, month
+ORDER BY year, month;
+
+-- Individual prizes per month
 SELECT
   YEAR(FROM_UNIXTIME(timestamp_micros / 1e6)) AS year,
   MONTH(FROM_UNIXTIME(timestamp_micros / 1e6)) AS month,
@@ -11,7 +21,7 @@ WHERE prize != 0
 GROUP BY year, month, prize
 ORDER BY year, month, prize;
 
-
+-- Net prizes per month
 SELECT
   year, month, SUM(payout_m) AS total_payout_m
 FROM (

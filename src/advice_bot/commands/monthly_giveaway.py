@@ -46,21 +46,21 @@ _PRIZE_TABLE_2025_08 = DropTable([
 ])
 
 _PRIZE_TABLE_2026_02 = DropTable([
-    (0.90, Prize.NO_PRIZE),
+    (0.94, Prize.NO_PRIZE),
     # Prize sub-table
-    (0.10, DropTable([
+    (0.06, DropTable([
         # Goodybag
-        (0.20, Prize.GOODYBAG),
+        (0.15, Prize.GOODYBAG),
         # GP prize
-        (0.40, DropTable([
+        (0.35, DropTable([
              (0.70, Prize.GP_2M),
              (0.20, Prize.GP_5M),
              (0.10, Prize.GP_10M),
          ])),
         # Custom rank
-        (0.40, DropTable([
-             (0.80, Prize.CUSTOM_RANK),
-             (0.20, Prize.CUSTOM_RANK_PLUSPLUS),
+        (0.50, DropTable([
+             (0.90, Prize.CUSTOM_RANK),
+             (0.10, Prize.CUSTOM_RANK_PLUSPLUS),
          ])),
     ])),
 ])
