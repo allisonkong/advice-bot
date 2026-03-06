@@ -37,26 +37,30 @@ class DiceRollCommand(Command):
 
     def SkillingCompetitionDiceRoll(self, message):
         TASKS = {
-            1: "50k Mastering Mixology Resin",
-            2: "75 Giants Foundry Swords",
-            3: "25k Buckets of Sand",
-            4: "2 Hespori KC",
-            5: "500 Ape Atoll laps",
-            6: "350 Herbiboar KC",
-            7: "Lucky genie! Pick any other task",
-            8: "50 Guardians of the Rift KC",
+            1: "25k Mastering Mixology resin",
+            2: "40 Giants Foundry swords",
+            3: "15k buckets of sand",
+            4: "100 Gnome deliveries",
+            5: "250 Ape Atoll laps",
+            6: "150 Herbiboar KC",
+            7: "Genie - lucky! Pick any task",
+            8: "25 Guardians of the Rift KC",
             9: "50 Slayer tasks",
-            10: "50 Tempoross KC",
-            11: "80 Hunter rumours",
-            12: "250 Mahogany Homes contracts",
-            13: "3M xp in any 'buyable' skill",
-            14: "400k Agility xp",
-            15: "400k Mining xp",
-            16: "300k Slayer xp",
-            17: "1M Hunter xp",
-            18: "1.5M Thieving xp",
-            19: "600k Woodcutting xp",
-            20: "400k Runecrafting xp",
+            10: "200 Tempoross reward permits",
+            11: "200 Port tasks",
+            12: "50 Hunter rumours",
+            13: "125 Mahogany Homes contracts",
+            14: "1.5m XP in a single 'buyable' skill",
+            15: "200k Agility XP",
+            16: "200k Mining XP",
+            17: "150k Slayer XP",
+            18: "500k Hunter XP",
+            19: "750k Thieving XP",
+            20: "300k Woodcutting XP",
+            21: "200k Runecrafting XP",
+            22: "500k Sailing XP",
+            23: "Guthix's Rest - task complete! Rest and roll again in 4 hours",
+            24: "Guthix's Balance - reroll and **double** the amount needed to complete task",
         }
 
         article = {
@@ -80,8 +84,12 @@ class DiceRollCommand(Command):
             18: "an",
             19: "a",
             20: "a",
+            21: "a",
+            22: "a",
+            23: "a",
+            24: "a",
         }
 
-        roll = random.SystemRandom().randint(1, 20)
+        roll = random.SystemRandom().randint(1, 24)
         chosen_task = TASKS[roll]
-        return f"{message.author.mention} rolls {article[roll]} **{roll}**. Your task is: {chosen_task}.\n\nPlease check the [spreadsheet](https://docs.google.com/spreadsheets/d/1CQEidoPPE3YnQxOCR48zM2wW0zaaeA7bqdnbc0xw3lA/edit?gid=1727437871#gid=1727437871) for detailed task and screenshot requirements."
+        return f"{message.author.mention} rolls {article[roll]} **{roll}**. Your task is: {chosen_task}.\n\nPlease check the [spreadsheet](https://docs.google.com/spreadsheets/d/1h0O_IUxgzPokzMMu5UwHQQyd_be0zTFI-97-izvJsek/edit?gid=1727437871#gid=1727437871) for detailed task and screenshot requirements."
