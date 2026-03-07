@@ -256,7 +256,7 @@ class AdviceBot(discord.Client):
             return
         if FLAGS.env != "prod":
             response = f"[{FLAGS.env}]\n{response}"
-        await message.channel.send(response)
+        await message.channel.send(response, suppress_embeds=True)
 
     async def ProcessCommand(self, command: str, message: discord.Message,
                              timestamp_micros: int, argv: list[str]):
