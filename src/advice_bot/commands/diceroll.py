@@ -60,7 +60,7 @@ class DiceRollCommand(Command):
             21: "200k Runecrafting XP",
             22: "500k Sailing XP",
             23: "Guthix's Rest - task complete! Rest and roll again in 4 hours",
-            24: "Guthix's Balance - reroll and **double** the amount needed to complete task",
+            24: "Guthix's Balance - roll again and **double** the amount needed to complete task",
         }
 
         article = {
