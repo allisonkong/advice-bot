@@ -124,7 +124,6 @@ class HelpCommand(Command):
         return help_msg
 
 
-_g_last_rickroll_time = None
 _g_rickroll_state = 0
 _RICKROLL_LINES = [
     "We're no strangers to love",
@@ -188,17 +187,11 @@ def MaybeHandleEasterEgg(message: discord.Message):
         ])
 
     def _RickRoll():
-        global _g_last_rickroll_time
         global _g_rickroll_state
 
         if not 0 <= _g_rickroll_state < len(_RICKROLL_LINES):
             _g_rickroll_state = 0
 
-        # Reset state if >1hr since last interaction.
-        now = time.time()
-        if _g_last_rickroll_time is None or now - _g_last_rickroll_time > 3600:
-            _g_rickroll_state = 0
-            _g_last_rickroll_time = now
         line = _RICKROLL_LINES[_g_rickroll_state]
         _g_rickroll_state += 1
         return f"🎵 {line} 🎵"
