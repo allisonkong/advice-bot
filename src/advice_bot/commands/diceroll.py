@@ -5,7 +5,7 @@ import re
 from advice_bot.commands.common import Command, CommandResult, CommandStatus
 from advice_bot.proto import params_pb2
 
-_BOUNDS_RE = re.compile("(\d+)-(\d+)")
+_BOUNDS_RE = re.compile(r"(\d+)-(\d+)")
 _USAGE = "Usage: `!roll` or `!roll MIN-MAX`."
 
 
